@@ -7,6 +7,7 @@ base_packages:
   - fd-find
   - ffmpeg
   - ffmpegthumbnailer
+  - gmp-devel
   - golang
   - highlight
   - jq
@@ -19,16 +20,23 @@ base_packages:
   - kernel-tools
   - kernel-tools-libs
   - kitty
+  - libffi-devel
+  - libyaml-devel
   - lm_sensors
   - lm_sensors-devel
   - lsb_release
   - mediainfo
   - mpv
   - nodejs
+  - openssl-devel
   - perl-FindBin
   - perl-IPC-Cmd
   - perl-Time-Piece
   - python3-nbconvert
+  - rbenv
+  - readline-devel
+  - ruby-build
   - sqlite
+  - zlib-devel
   - zram-generator
   - zram-generator-defaults
