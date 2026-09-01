@@ -26,3 +26,8 @@ base_packages:
   - nodejs
   - python3-nbconvert
   - sqlite
+  - zram-generator
+  - zram-generator-defaults
+  - perl-FindBin
+  - perl-IPC-Cmd
+  - perl-Time-Piece

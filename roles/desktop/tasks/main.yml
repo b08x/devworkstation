@@ -11,6 +11,24 @@
     flatpakrepo_url: https://flathub.org
     method: system
     state: present
+  tags: ["flathub"]
 
 - name: Include VS Code installation tasks
   ansible.builtin.include_tasks: vscode.yml
+
+- name: Install Flatpak applications
+  community.general.flatpak:
+    name: "{{ item }}"
+    state: present
+    method: system
+    remote: flathub
+  loop:
+    - com.google.Chrome
+    - io.github.vikdevelop.SaveDesktop
+    - com.mattjakeman.ExtensionManager
+    - com.ranfdev.DistroShelf
+    - io.github.input_leap.input-leap
+    - io.podman_desktop.PodmanDesktop
+    - page.tesk.Refine
+    - org.gnome.DejaDup
+  tags: ["flatpaks"]

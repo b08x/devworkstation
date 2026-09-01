@@ -28,6 +28,7 @@
   tags: ["repos", "base"]
 
 - name: Install Base packages
+  tags: ["packages", "base"]
   block:
     - name: Install Base packages
       ansible.builtin.dnf:
@@ -41,3 +42,11 @@
     - name: Handle package installation failures
       ansible.builtin.debug:
         msg: "Failed to install some Base packages. Please check the error message above."
+
+- name: Include gitflow installation tasks
+  ansible.builtin.include_tasks: gitflow.yml
+  tags: ["gitflow", "base"]
+
+- name: Include cargo installation tasks
+  ansible.builtin.include_tasks: cargo.yml
+  tags: ["cargo", "base"]
