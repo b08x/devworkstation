@@ -1,5 +1,4 @@
 ---
-
 - name: Download rustup-init script
   ansible.builtin.get_url:
     url: https://sh.rustup.rs
@@ -43,9 +42,12 @@
   block:
     - name: Install gitui
       community.general.cargo:
-        name: gitui
+        name: "{{ item }}"
         state: present
         locked: true
+      loop:
+        - gitui
+        - eza
 
   rescue:
     - name: Handle gitui installation failure

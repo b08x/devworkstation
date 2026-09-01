@@ -50,3 +50,23 @@
 - name: Include cargo installation tasks
   ansible.builtin.include_tasks: cargo.yml
   tags: ["cargo", "base"]
+
+- name: Include Intel installation tasks
+  ansible.builtin.include_tasks: intel.yml
+  tags: ["intel", "base"]
+
+- name: Include fzf installation tasks
+  ansible.builtin.include_tasks: fzf.yml
+  tags: ["fzf", "base"]
+
+- name: Include inxi installation tasks
+  ansible.builtin.include_tasks: inxi.yml
+  tags: ["inxi", "base"]
+
+- name: Include Ranger installation tasks
+  ansible.builtin.include_tasks: ranger.yml
+  tags: ["ranger", "base"]
+
+- name: Include Zsh installation tasks
+  ansible.builtin.include_tasks: zsh.yml
+  tags: ["zsh", "base"]

@@ -1,0 +1,25 @@
+---
+- name: Clone fzf repository
+  ansible.builtin.git:
+    repo: "https://github.com/junegunn/fzf.git"
+    dest: /tmp/fzf
+    clone: true
+    update: true
+    version: master
+  become: false
+  tags: ["fzf", "base"]
+
+- name: Install fzf
+  ansible.builtin.command:
+    cmd: make install
+    chdir: /tmp/fzf
+    creates: /usr/local/bin/fzf
+  tags: ["fzf", "base"]
+
+- name: Copy fzf binaries to /usr/local/bin
+  ansible.builtin.copy:
+    src: /tmp/fzf/bin/
+    dest: /usr/local/bin/
+    remote_src: true
+    mode: "0755"
+  tags: ["fzf", "base"]

@@ -1,0 +1,19 @@
+---
+# tasks file for inxi installation in b08x.devworkstation.base
+
+- name: Install inxi system information tool
+  tags: ["inxi", "base"]
+  block:
+    - name: Install inxi using package manager
+      ansible.builtin.package:
+        name: inxi
+        state: present
+
+  rescue:
+    - name: Download inxi standalone script from smxi.org
+      ansible.builtin.get_url:
+        url: https://smxi.org/inxi
+        dest: /usr/local/bin/inxi
+        mode: "0755"
+        owner: root
+        group: root

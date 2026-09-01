@@ -1,5 +1,4 @@
 ---
-
 base_packages:
   - aria2
   - bat
@@ -8,6 +7,7 @@ base_packages:
   - fd-find
   - ffmpeg
   - ffmpegthumbnailer
+  - golang
   - highlight
   - jq
   - kernel-devel
@@ -21,13 +21,14 @@ base_packages:
   - kitty
   - lm_sensors
   - lm_sensors-devel
+  - lsb_release
   - mediainfo
   - mpv
   - nodejs
+  - perl-FindBin
+  - perl-IPC-Cmd
+  - perl-Time-Piece
   - python3-nbconvert
   - sqlite
   - zram-generator
   - zram-generator-defaults
-  - perl-FindBin
-  - perl-IPC-Cmd
-  - perl-Time-Piece

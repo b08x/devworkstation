@@ -1,3 +1,27 @@
 ---
 # check if ranger is installed
 # install from package manager, if not in pckage manager, install from pipx as user (pipx install ranger-fm)
+
+- name: Install Ranger file manager
+  tags: ["ranger", "base"]
+  block:
+    - name: Check if ranger is installed
+      ansible.builtin.command:
+        cmd: "ranger --version"
+      register: base_ranger_check
+      changed_when: false
+      ignore_errors: true
+
+    - name: Install Ranger using package manager
+      ansible.builtin.package:
+        name: ranger
+        state: present
+      when: base_ranger_check.rc != 0
+
+  rescue:
+    - name: Install Ranger using pipx as user
+      ansible.builtin.command:
+        cmd: "pipx install ranger-fm"
+        creates: "{{ ansible_env.HOME }}/.local/bin/ranger"
+      become: false
+      tags: ["ranger", "base"]
