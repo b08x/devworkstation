@@ -8,36 +8,36 @@ virt_my_variable: "default_value"
 # defaults file for libvirt
 
 # The '@virtualization' group is recommended for a full install on Fedora.
-libvirt_packages:
+virt_libvirt_packages:
   - "@virtualization"
 
 # Name of the libvirt service.
-libvirt_service: "libvirtd.service"
+virt_libvirt_service: "libvirtd.service"
 
 # Whether to enable and start the libvirt service.
-libvirt_service_enabled: true
+virt_libvirt_service_enabled: true
 
 # List of users to add to the 'libvirt' group for passwordless access.
-libvirt_users:
+virt_libvirt_users:
   - "{{ user.name }}"
 
 # Configuration for /etc/libvirt/libvirtd.conf
-libvirt_unix_sock_group: "libvirt"
-libvirt_unix_sock_rw_perms: "0770"
-libvirt_auth_unix_rw: "none"
+virt_libvirt_unix_sock_group: "libvirt"
+virt_libvirt_unix_sock_rw_perms: "0770"
+virt_libvirt_auth_unix_rw: "none"
 
 # Whether to disable lvmetad in /etc/lvm/lvm.conf for better
 # integration with libvirt storage pools.
-libvirt_configure_lvm: true
+virt_libvirt_configure_lvm: true
 
 # defaults file for docker
 
 # Specifies the version of Docker CE to install.
 # Example: "3:28.3.2-1.fc41". If empty, installs the latest version.
-docker_version: ""
+virt_docker_version: ""
 
 # List of core Docker packages to install.
-docker_packages:
+virt_docker_packages:
   # - docker-ce
   # - docker-ce-cli
   - containerd.io
@@ -46,30 +46,30 @@ docker_packages:
   - docker-model-plugin
 
 # URL for the Docker GPG key to verify package authenticity.
-docker_gpg_key_url: "https://download.docker.com/linux/fedora/gpg"
+virt_docker_gpg_key_url: "https://download.docker.com/linux/fedora/gpg"
 
 # The name of the Docker systemd service.
-docker_service_name: "docker.service"
+virt_docker_service_name: "docker.service"
 
 # Whether to enable the Docker service to start on boot.
-docker_service_enabled: true
+virt_docker_service_enabled: true
 
 # List of users to add to the 'docker' group.
 # WARNING: This grants privileges equivalent to root on the host.
 # Use with extreme caution. See documentation for security implications.
-docker_users:
+virt_docker_users:
   - "{{ user.name }}"
 
-docker_storage: "/var/lib/docker"
+virt_docker_storage: "/var/lib/docker"
 
 # Dictionary of key-value pairs for /etc/docker/daemon.json.
 # Example: { "log-driver": "journald", "userns-remap": "default" }
-docker_daemon_config: {}
+virt_docker_daemon_config: {}
 
 # Whether to remove known conflicting packages (e.g., podman-docker).
-docker_remove_conflicting_packages: false
+virt_docker_remove_conflicting_packages: false
 
-podman_packages:
+virt_podman_packages:
   - podman
   - podman-compose
   - podman-docker

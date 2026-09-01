@@ -1,7 +1,7 @@
 ---
 - name: Install Podman and related packages
   ansible.builtin.dnf:
-    name: "{{ podman_packages }}"
+    name: "{{ virt_podman_packages }}"
     state: present
 
 - name: Ensure rootless podman configuration (optional/check)
