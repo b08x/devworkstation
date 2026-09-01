@@ -25,14 +25,12 @@
       environment:
         ZSH: "/usr/share/oh-my-zsh"
       tags: ["zsh", "oh-my-zsh"]
-      when: base_oh_my_zsh_install_script is changed
       register: base_oh_my_zsh_install
 
     - name: Clean up oh-my-zsh install script
       ansible.builtin.file:
         path: "/tmp/oh-my-zsh-install.sh"
         state: absent
-      when: base_oh_my_zsh_install is changed
 
 - name: Check if zoxide is installed
   ansible.builtin.stat:
