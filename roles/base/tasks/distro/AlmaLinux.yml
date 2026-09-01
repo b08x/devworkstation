@@ -45,7 +45,6 @@
         base_repository_setup_failed: true
       tags: ["repo_setup"]
 
-
 - name: Install RPM Fusion keys and repositories
   tags: ["rpmfusion"]
   block:
@@ -123,7 +122,6 @@
       ansible.builtin.set_fact:
         base_dnf_config_failed: true
       tags: ["dnf_config"]
-
 
 - name: Force refresh DNF metadata cache
   ansible.builtin.command:

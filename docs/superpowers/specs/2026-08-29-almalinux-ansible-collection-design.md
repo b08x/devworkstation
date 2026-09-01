@@ -27,15 +27,15 @@ collection is designed to be the first artifact in the portfolio that isn't.
 ## Why this project, specifically
 
 Measured 2026-08-29: 101 own GitHub repositories, of which **5 have a homepage and
-6 have any stars.** The deficit is not output or focus — it is *completion*. Four
+6 have any stars.** The deficit is not output or focus — it is _completion_. Four
 existing repos attack the same problem independently:
 
-| Repo | Description | Last push |
-|---|---|---|
-| `ansible-rhel-workstation-builder` | *"building custom Fedora/Rocky Linux workstations using Ansible"* | 2026-05 |
-| `pop_os-workstation-builder` | *"Pop!_OS workstation builder with 3-Layer governance architecture"* | 2026-08-27 |
-| `dots` | dotfiles / config management | 2026-08-27 |
-| `syncopated` | SyncopatedIaC / RaySession Linux-audio infrastructure (confirmed real work) | 2026-01 |
+| Repo                               | Description                                                                 | Last push  |
+| ---------------------------------- | --------------------------------------------------------------------------- | ---------- |
+| `ansible-rhel-workstation-builder` | _"building custom Fedora/Rocky Linux workstations using Ansible"_           | 2026-05    |
+| `pop_os-workstation-builder`       | _"Pop!\_OS workstation builder with 3-Layer governance architecture"_       | 2026-08-27 |
+| `dots`                             | dotfiles / config management                                                | 2026-08-27 |
+| `syncopated`                       | SyncopatedIaC / RaySession Linux-audio infrastructure (confirmed real work) | 2026-01    |
 
 This collection consolidates that three-way duplication into one publishable
 thing. It is mostly finishing work already done three times, not new work.
@@ -56,12 +56,12 @@ can, and progress against it is legible to a reader who did not write the list.
 
 ### Out — deliberately
 
-| Excluded | Reason |
-|---|---|
-| Distro-agnostic support (Debian/Ubuntu/SUSE) | Explicit author decision: *"it just becomes too many decisions after a while."* Every conditional doubles the test matrix. |
-| EL8 / EL9 backports | Same. A "maybe EL9 too" door is how scope creep enters. Revisit only after v1.0. |
-| Reimplementing CIS/STIG benchmark remediation | Occupied by mature projects — see Roles below. |
-| Cloud-provider-specific image building (AMI/qcow pipelines) | Adjacent, unbounded, and separable. The collection should *work* on cloud hosts; it does not build images. |
+| Excluded                                                    | Reason                                                                                                                     |
+| ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Distro-agnostic support (Debian/Ubuntu/SUSE)                | Explicit author decision: _"it just becomes too many decisions after a while."_ Every conditional doubles the test matrix. |
+| EL8 / EL9 backports                                         | Same. A "maybe EL9 too" door is how scope creep enters. Revisit only after v1.0.                                           |
+| Reimplementing CIS/STIG benchmark remediation               | Occupied by mature projects — see Roles below.                                                                             |
+| Cloud-provider-specific image building (AMI/qcow pipelines) | Adjacent, unbounded, and separable. The collection should _work_ on cloud hosts; it does not build images.                 |
 
 ---
 
@@ -99,12 +99,12 @@ forward, so no structural debt is inherited.
 
 ### `base`, `storage`, `network`, `tuning` — built
 
-| Role | Covers |
-|---|---|
-| `base` | repositories, packages, users, sudo, SSH configuration |
-| `storage` | LVM, filesystems, NFS |
-| `network` | bond interfaces, NetworkManager / nmcli |
-| `tuning` | tuned profiles, sysctl, kernel parameters |
+| Role      | Covers                                                 |
+| --------- | ------------------------------------------------------ |
+| `base`    | repositories, packages, users, sudo, SSH configuration |
+| `storage` | LVM, filesystems, NFS                                  |
+| `network` | bond interfaces, NetworkManager / nmcli                |
+| `tuning`  | tuned profiles, sysctl, kernel parameters              |
 
 Together these take a fresh Alma 10 host to a known-good state — the coherent
 minimum that exercises both the workstation and server paths.
@@ -120,11 +120,11 @@ benchmark coverage that isn't there.
 So `hardening` is an **opinionated profile layer** over the upstream project:
 
 1. **Profiles** — workstation vs. server, with different control sets.
-2. **Documented waivers** — which controls are disabled and *why*, in operational terms. This is the deliverable with the most of the author's 23 years in it, and it does not exist upstream.
+2. **Documented waivers** — which controls are disabled and _why_, in operational terms. This is the deliverable with the most of the author's 23 years in it, and it does not exist upstream.
 3. **Post-hardening functional verification** — the genuine contribution.
 
-**On (3):** upstream asserts that controls were *applied*. Nobody verifies the
-host still *works* afterward. The unowned territory is exactly the tension
+**On (3):** upstream asserts that controls were _applied_. Nobody verifies the
+host still _works_ afterward. The unowned territory is exactly the tension
 between hardening and optimization:
 
 - Does the bond interface still come up?
@@ -132,7 +132,7 @@ between hardening and optimization:
 - Did the tuned profile survive?
 - Does the workstation still boot to a usable session?
 
-Molecule scenarios assert these *after* hardening runs. That is the thing this
+Molecule scenarios assert these _after_ hardening runs. That is the thing this
 collection offers that no other EL10 collection does, and it falls directly out
 of the author's stated interest in "workstation hardening **and** optimization."
 
@@ -185,13 +185,13 @@ The failure mode is not building the wrong thing — it is never publishing. The
 evidence is 101 repos and 5 homepages. Galaxy version history is the checkable
 artifact, and it accrues nothing until something is tagged.
 
-| Version | Contents |
-|---|---|
-| **v0.1.0** | `base` + `storage`, molecule + CI green, Galaxy published, README with the full RHCE checklist showing what is *not* yet done |
-| v0.2.0 | `network` + `tuning` |
-| v0.3.0 | `hardening` with profiles, waivers, and the functional verification suite |
-| v0.4.0 | `docs/method.md` published |
-| v1.0.0 | RHCE objective coverage complete; API stable |
+| Version    | Contents                                                                                                                      |
+| ---------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| **v0.1.0** | `base` + `storage`, molecule + CI green, Galaxy published, README with the full RHCE checklist showing what is _not_ yet done |
+| v0.2.0     | `network` + `tuning`                                                                                                          |
+| v0.3.0     | `hardening` with profiles, waivers, and the functional verification suite                                                     |
+| v0.4.0     | `docs/method.md` published                                                                                                    |
+| v1.0.0     | RHCE objective coverage complete; API stable                                                                                  |
 
 v0.1.0 ships **two** roles rather than five. The purpose of the first tag is to
 prove the pipeline end to end — collection build, molecule, CI, Galaxy publish —
@@ -206,14 +206,14 @@ silence, and it makes the next release visibly incremental rather than a rewrite
 
 ## Risks
 
-| Risk | Mitigation |
-|---|---|
-| Never published (the historical pattern) | v0.1.0 is deliberately two roles; publishing is the release gate, not completeness |
-| Scope creep into distro-agnosticism | Named as an explicit non-goal; any conditional on `ansible_os_family` outside EL is a review failure |
-| `hardening` drifts toward reimplementing CIS | Role depends on upstream; if it starts writing its own controls, that is the signal it has gone wrong |
-| LLM-generated EL10 code is subtly wrong | The reason molecule and idempotence checks are non-negotiable; also the raw material for `docs/method.md` |
-| Container-only testing gives false confidence | At least one VM-backed scenario for bonds, LVM, and kernel tuning |
-| The four legacy repos linger and re-fragment | On v0.1.0, archive them on GitHub with a README pointer to the collection |
+| Risk                                          | Mitigation                                                                                                |
+| --------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| Never published (the historical pattern)      | v0.1.0 is deliberately two roles; publishing is the release gate, not completeness                        |
+| Scope creep into distro-agnosticism           | Named as an explicit non-goal; any conditional on `ansible_os_family` outside EL is a review failure      |
+| `hardening` drifts toward reimplementing CIS  | Role depends on upstream; if it starts writing its own controls, that is the signal it has gone wrong     |
+| LLM-generated EL10 code is subtly wrong       | The reason molecule and idempotence checks are non-negotiable; also the raw material for `docs/method.md` |
+| Container-only testing gives false confidence | At least one VM-backed scenario for bonds, LVM, and kernel tuning                                         |
+| The four legacy repos linger and re-fragment  | On v0.1.0, archive them on GitHub with a README pointer to the collection                                 |
 
 ---
 

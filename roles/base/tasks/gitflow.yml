@@ -1,5 +1,4 @@
 ---
-
 # clone git flow-avh repository
 - name: Clone gitflow-avh repository
   ansible.builtin.git:
