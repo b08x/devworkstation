@@ -1,5 +1,4 @@
 ---
-
 - name: Install VS Code via Flatpak
   community.general.flatpak:
     name: com.visualstudio.code
@@ -15,8 +14,7 @@
     fi
   args:
     executable: /bin/bash
-  loop: "{{ vscode_extensions }}"
-  when: vscode_extensions is defined and vscode_extensions | length > 0
+  loop: "{{ desktop_vscode_extensions }}"
+  when: desktop_vscode_extensions is defined and desktop_vscode_extensions | length > 0
   become: false
   changed_when: false
-

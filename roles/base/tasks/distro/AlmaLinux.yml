@@ -1,5 +1,4 @@
 ---
-
 # ============================================================================
 # Rocky/RHEL Repository and DNF Configuration
 # Sets up EPEL, PowerTools/CRB, RPM Fusion and optimizes DNF
@@ -43,14 +42,13 @@
 
     - name: Mark repository setup as failed
       ansible.builtin.set_fact:
-        repository_setup_failed: true
+        base_repository_setup_failed: true
       tags: ["repo_setup"]
 
 
 - name: Install RPM Fusion keys and repositories
   tags: ["rpmfusion"]
   block:
-
     - name: Install RPM Fusion Free and Non-Free keys
       ansible.builtin.rpm_key:
         key: "{{ item }}"
@@ -87,7 +85,7 @@
 
     - name: Mark RPM Fusion setup as failed
       ansible.builtin.set_fact:
-        rpmfusion_setup_failed: true
+        base_rpmfusion_setup_failed: true
       tags: ["rpmfusion_setup"]
 
 # ----------------------------------------------------------------------------
@@ -123,7 +121,7 @@
 
     - name: Mark DNF configuration as failed
       ansible.builtin.set_fact:
-        dnf_config_failed: true
+        base_dnf_config_failed: true
       tags: ["dnf_config"]
 
 

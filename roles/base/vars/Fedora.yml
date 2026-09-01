@@ -1,6 +1,5 @@
 ---
 
-packages:
+base_packages:
   base:
     - aria2
-    

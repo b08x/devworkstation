@@ -1,6 +1,6 @@
 ---
 # vars file for b08x.devworkstation.desktop
-vscode_extensions:
+desktop_vscode_extensions:
   - ahmadawais.shades-of-purple
   - anseki.vscode-color
   - anthropic.claude-code
