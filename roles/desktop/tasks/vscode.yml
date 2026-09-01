@@ -1,0 +1,22 @@
+---
+
+- name: Install VS Code via Flatpak
+  community.general.flatpak:
+    name: com.visualstudio.code
+    state: present
+    method: system
+    remote: flathub
+
+- name: Install VS Code extensions
+  ansible.builtin.shell: |
+    set -o pipefail
+    if ! flatpak run com.visualstudio.code --list-extensions | grep -Fqx "{{ item }}"; then
+      flatpak run com.visualstudio.code --install-extension "{{ item }}"
+    fi
+  args:
+    executable: /bin/bash
+  loop: "{{ vscode_extensions }}"
+  when: vscode_extensions is defined and vscode_extensions | length > 0
+  become: false
+  changed_when: false
+

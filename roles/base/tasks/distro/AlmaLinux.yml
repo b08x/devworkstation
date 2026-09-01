@@ -1,0 +1,133 @@
+---
+
+# ============================================================================
+# Rocky/RHEL Repository and DNF Configuration
+# Sets up EPEL, PowerTools/CRB, RPM Fusion and optimizes DNF
+# ============================================================================
+
+# ----------------------------------------------------------------------------
+# Repository Configuration
+# ----------------------------------------------------------------------------
+
+- name: Configure RHEL family repositories
+  tags: ["repositories"]
+  block:
+    - name: Install EPEL repository
+      ansible.builtin.dnf:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - epel-release
+        - distribution-gpg-keys
+        - dnf-plugins-core
+      tags: ["epel"]
+
+    - name: Enable PowerTools/CRB and additional repositories
+      ansible.builtin.shell: |
+        dnf config-manager --set-enabled crb
+
+        # Enable additional repositories
+        dnf config-manager --set-enabled highavailability
+        dnf config-manager --set-enabled rt
+      changed_when: false
+      tags: ["highavailability", "crb", "rt"]
+
+  rescue:
+    - name: Log repository setup failure
+      ansible.builtin.debug:
+        msg: >
+          Failed to set up repositories.
+          Error details: {{ ansible_failed_result | default('Unknown error') }}
+          This might be due to network connectivity issues or repository availability.
+      tags: ["repo_setup"]
+
+    - name: Mark repository setup as failed
+      ansible.builtin.set_fact:
+        repository_setup_failed: true
+      tags: ["repo_setup"]
+
+
+- name: Install RPM Fusion keys and repositories
+  tags: ["rpmfusion"]
+  block:
+
+    - name: Install RPM Fusion Free and Non-Free keys
+      ansible.builtin.rpm_key:
+        key: "{{ item }}"
+        state: present
+      loop:
+        - /usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-free-el-10
+        - /usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-nonfree-el-10
+      tags: ["rpmfusion"]
+
+    # - name: Install RPM Fusion Free and Non-Free repositories
+    #   ansible.builtin.dnf:
+    #     name: "{{ item }}"
+    #     state: present
+    #     sslverify: false
+    #   loop:
+    #     - https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-10.noarch.rpm
+    #     - https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-10.noarch.rpm
+    #   tags: ["rpmfusion"]
+    - name: Force refresh DNF metadata cache
+      ansible.builtin.shell: |
+        dnf --setopt=localpkg_gpgcheck=1 install \
+            https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-$(rpm -E %rhel).noarch.rpm \
+            https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-$(rpm -E %rhel).noarch.rpm
+      changed_when: true
+
+  rescue:
+    - name: Log RPM Fusion setup failure
+      ansible.builtin.debug:
+        msg: >
+          Failed to set up RPM Fusion repositories.
+          Error details: {{ ansible_failed_result | default('Unknown error') }}
+          This might be due to network connectivity issues or repository availability.
+      tags: ["rpmfusion_setup"]
+
+    - name: Mark RPM Fusion setup as failed
+      ansible.builtin.set_fact:
+        rpmfusion_setup_failed: true
+      tags: ["rpmfusion_setup"]
+
+# ----------------------------------------------------------------------------
+# DNF Performance Optimization
+# ----------------------------------------------------------------------------
+
+- name: Set DNF Repository Priorities
+  tags: ["dnf_configuration"]
+  block:
+    - name: Configure repository priorities
+      ansible.builtin.shell: |
+        # Base system and official extension repositories (highest priority)
+        dnf config-manager --save --setopt="baseos.priority=1"
+        dnf config-manager --save --setopt="appstream.priority=1"
+        dnf config-manager --save --setopt="crb.priority=1"
+        dnf config-manager --save --setopt="rt.priority=1"
+        dnf config-manager --save --setopt="highavailability.priority=1"
+
+        # EPEL and RPM Fusion repositories (must be at the same priority tier)
+        dnf config-manager --save --setopt="epel.priority=20"
+        dnf config-manager --save --setopt="rpmfusion-*.priority=20"
+      changed_when: false
+      tags: ["repo_priorities"]
+
+  rescue:
+    - name: Log DNF configuration failure
+      ansible.builtin.debug:
+        msg: >
+          Failed to configure DNF settings.
+          Error details: {{ ansible_failed_result | default('Unknown error') }}
+          DNF may still function with default settings.
+      tags: ["dnf_config"]
+
+    - name: Mark DNF configuration as failed
+      ansible.builtin.set_fact:
+        dnf_config_failed: true
+      tags: ["dnf_config"]
+
+
+- name: Force refresh DNF metadata cache
+  ansible.builtin.command:
+    cmd: dnf makecache
+  changed_when: true

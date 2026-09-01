@@ -4,3 +4,40 @@
 - name: Display the value of base_my_variable
   ansible.builtin.debug:
     msg: "The value of base_my_variable is {{ base_my_variable }}"
+
+- name: Include distribution package variables
+  ansible.builtin.include_vars: "{{ ansible_distribution }}.yml"
+  tags: ['packages', 'distro']
+
+# ----------------------------------------------------------------------------
+# DNF Performance Optimization
+# ----------------------------------------------------------------------------
+
+- name: Include DNF configuration tasks
+  ansible.builtin.include_tasks: dnf.yml
+  tags: ["dnf", "base", "repos"]
+
+# ----------------------------------------------------------------------------
+# Repository Configuration
+# ----------------------------------------------------------------------------
+
+- name: Include Distribution Specific Repository Tasks
+  ansible.builtin.include_tasks: "distro/{{ ansible_distribution }}.yml"
+  when:
+    - enable_third_party_repos | default(true)
+  tags: ["repos", "base"]
+
+- name: Install Base packages
+  block:
+    - name: Install Base packages
+      ansible.builtin.dnf:
+        name: "{{ item }}"
+        state: present
+        allowerasing: true
+      with_items:
+        - "{{ base_packages }}"
+
+  rescue:
+    - name: Handle package installation failures
+      ansible.builtin.debug:
+        msg: "Failed to install some Base packages. Please check the error message above."

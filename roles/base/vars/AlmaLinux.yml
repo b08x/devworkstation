@@ -1,0 +1,28 @@
+---
+
+base_packages:
+  - aria2
+  - bat
+  - bsdtar
+  - caca-utils
+  - fd-find
+  - ffmpeg
+  - ffmpegthumbnailer
+  - highlight
+  - jq
+  - kernel-devel
+  - kernel-headers
+  - kernel-modules
+  - kernel-modules-core
+  - kernel-modules-extra
+  - kernel-modules-extra-matched
+  - kernel-tools
+  - kernel-tools-libs
+  - kitty
+  - lm_sensors
+  - lm_sensors-devel
+  - mediainfo
+  - mpv
+  - nodejs
+  - python3-nbconvert
+  - sqlite

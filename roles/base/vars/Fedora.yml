@@ -1,0 +1,6 @@
+---
+
+packages:
+  base:
+    - aria2
+    

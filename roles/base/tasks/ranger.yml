@@ -1,0 +1,7 @@
+---
+
+check if ranger is installed
+
+install from package manager, if not in pckage manager, install from pipx as user (pipx install ranger-fm)
+
+s

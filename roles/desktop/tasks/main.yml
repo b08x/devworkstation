@@ -4,3 +4,13 @@
 - name: Display the value of desktop_my_variable
   ansible.builtin.debug:
     msg: "The value of desktop_my_variable is {{ desktop_my_variable }}"
+
+- name: Ensure Flathub remote repository is present
+  community.general.flatpak_remote:
+    name: flathub
+    flatpakrepo_url: https://flathub.org
+    method: system
+    state: present
+
+- name: Include VS Code installation tasks
+  ansible.builtin.include_tasks: vscode.yml
