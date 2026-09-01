@@ -1,0 +1,6 @@
+---
+# tasks file for b08x.devworkstation.selinux
+
+- name: Display the value of selinux_my_variable
+  ansible.builtin.debug:
+    msg: "The value of selinux_my_variable is {{ selinux_my_variable }}"

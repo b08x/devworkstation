@@ -1,0 +1,6 @@
+---
+# tasks file for b08x.devworkstation.tuning
+
+- name: Display the value of tuning_my_variable
+  ansible.builtin.debug:
+    msg: "The value of tuning_my_variable is {{ tuning_my_variable }}"

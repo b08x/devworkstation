@@ -1,0 +1,6 @@
+---
+# tasks file for b08x.devworkstation.base
+
+- name: Display the value of base_my_variable
+  ansible.builtin.debug:
+    msg: "The value of base_my_variable is {{ base_my_variable }}"

@@ -1,0 +1,6 @@
+---
+# tasks file for b08x.devworkstation.networking
+
+- name: Display the value of networking_my_variable
+  ansible.builtin.debug:
+    msg: "The value of networking_my_variable is {{ networking_my_variable }}"

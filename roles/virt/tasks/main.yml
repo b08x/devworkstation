@@ -1,0 +1,6 @@
+---
+# tasks file for b08x.devworkstation.virt
+
+- name: Display the value of virt_my_variable
+  ansible.builtin.debug:
+    msg: "The value of virt_my_variable is {{ virt_my_variable }}"
