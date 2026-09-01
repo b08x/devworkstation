@@ -36,4 +36,3 @@
 - name: Include input-remapper tasks
   ansible.builtin.include_tasks: input-remapper.yml
   tags: ["input-remapper"]
-    
