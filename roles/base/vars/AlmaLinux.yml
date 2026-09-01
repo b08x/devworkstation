@@ -34,6 +34,7 @@ base_packages:
   - perl-IPC-Cmd
   - perl-Time-Piece
   - python3-devel
+  - python3-gobject-devel
   - python3-nbconvert
   - python3-pip
   - rbenv
