@@ -1,0 +1,29 @@
+---
+
+- name: Install input-remapper
+  tags: ["input-remapper", "desktop"]
+  ignore_errors: "{{ ansible_check_mode }}"
+  vars:
+    path:
+      - "/opt/rust/bin"
+  environment:
+    PATH: "{{ path | join(':') }}:{{ ansible_env.PATH }}:/sbin:/bin"
+    RUSTUP_HOME: "/opt/rust"
+    CARGO_HOME: "/opt/rust"
+    MAKE_JOBS: "4"
+  block:
+    - name: Install input-remapper
+      community.general.pipx:
+        name: input-remapper
+        source: git+https://github.com/sezanzeb/input-remapper.git
+        state: install
+        install_deps: true
+        pip_args: "--no-binary :all:"
+
+    - name: Enable input-remapper service
+      ansible.builtin.systemd:
+        name: input-remapper
+        daemon_reload: true
+        enabled: true
+        state: started
+

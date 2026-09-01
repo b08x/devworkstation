@@ -7,10 +7,12 @@
 
 - name: Install Podman and related packages
   ansible.builtin.include_tasks: podman.yml
+  when: use_containers | default(false)
   tags: ["podman", "containerd"]
 
 - name: Install Docker and related packages
   ansible.builtin.include_tasks: docker.yml
+  when: use_containers | default(false) 
   tags: ["docker", "containerd"]
 
 - name: Install KVM and related packages

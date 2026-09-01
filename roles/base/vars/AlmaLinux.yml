@@ -24,6 +24,7 @@ base_packages:
   - libyaml-devel
   - lm_sensors
   - lm_sensors-devel
+  - lnav
   - lsb_release
   - mediainfo
   - mpv
@@ -32,7 +33,9 @@ base_packages:
   - perl-FindBin
   - perl-IPC-Cmd
   - perl-Time-Piece
+  - python3-devel
   - python3-nbconvert
+  - python3-pip
   - rbenv
   - readline-devel
   - ruby-build

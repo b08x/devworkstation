@@ -32,3 +32,8 @@
     - page.tesk.Refine
     - org.gnome.DejaDup
   tags: ["flatpaks"]
+
+- name: Include input-remapper tasks
+  ansible.builtin.include_tasks: input-remapper.yml
+  tags: ["input-remapper"]
+    
