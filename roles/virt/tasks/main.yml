@@ -4,3 +4,15 @@
 - name: Display the value of virt_my_variable
   ansible.builtin.debug:
     msg: "The value of virt_my_variable is {{ virt_my_variable }}"
+
+- name: Install Podman and related packages
+  ansible.builtin.include_tasks: podman.yml
+  tags: ["podman", "containerd"]
+
+- name: Install Docker and related packages
+  ansible.builtin.include_tasks: docker.yml
+  tags: ["docker", "containerd"]
+
+- name: Install KVM and related packages
+  ansible.builtin.include_tasks: kvm.yml
+  tags: ["kvm", "libvirt"]

@@ -1,2 +1,19 @@
 ---
 # handlers file for b08x.devworkstation.virt
+
+# handlers file for libvirt
+- name: Restart libvirtd
+  ansible.builtin.systemd:
+    name: "{{ libvirt_service }}"
+    state: restarted
+
+# handlers file for docker role
+
+- name: Restart Docker
+  ansible.builtin.service:
+    name: "{{ docker_service_name }}"
+    state: restarted
+
+- name: Reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: yes
