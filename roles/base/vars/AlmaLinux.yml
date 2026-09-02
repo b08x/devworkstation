@@ -7,9 +7,13 @@ base_packages:
   - fd-find
   - ffmpeg
   - ffmpegthumbnailer
+  - flatpak
+  - gettext
   - gmp-devel
   - golang
+  - gtksourceview4
   - highlight
+  - htop
   - jq
   - kernel-devel
   - kernel-headers
@@ -27,12 +31,14 @@ base_packages:
   - lnav
   - lsb_release
   - mediainfo
+  - micro
   - mpv
   - nodejs
   - openssl-devel
   - perl-FindBin
   - perl-IPC-Cmd
   - perl-Time-Piece
+  - pipx
   - python3-devel
   - python3-gobject-devel
   - python3-nbconvert
@@ -41,6 +47,8 @@ base_packages:
   - readline-devel
   - ruby-build
   - sqlite
+  - uv
   - zlib-devel
   - zram-generator
   - zram-generator-defaults
+  - zsh
