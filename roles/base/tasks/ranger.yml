@@ -17,6 +17,7 @@
       ansible.builtin.package:
         name: ranger
         state: present
+      become: true
       when: base_ranger_check.rc != 0
 
   rescue:
