@@ -8,7 +8,7 @@
 - name: Ensure Flathub remote repository is present
   community.general.flatpak_remote:
     name: flathub
-    flatpakrepo_url: https://flathub.org
+    flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
     method: system
     state: present
   tags: ["flathub"]
