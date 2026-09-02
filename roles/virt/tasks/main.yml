@@ -18,3 +18,7 @@
 - name: Install KVM and related packages
   ansible.builtin.include_tasks: kvm.yml
   tags: ["kvm", "libvirt"]
+
+- name: Resolve network conflicts between Libvirt and Docker
+  ansible.builtin.include_tasks: network_conflicts.yml
+  tags: ["kvm", "docker", "network", "libvirt"]
