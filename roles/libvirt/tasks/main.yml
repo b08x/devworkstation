@@ -3,7 +3,7 @@
 
 - name: Install virtualization packages
   ansible.builtin.dnf:
-    name: "{{ virt_libvirt_packages }}"
+    name: "{{ libvirt_packages }}"
     state: present
   when: ansible_distribution == "Fedora"
 
@@ -53,20 +53,20 @@
     owner: root
     group: root
     mode: "0644"
-  when: virt_libvirt_configure_lvm
+  when: libvirt_configure_lvm
 
 - name: Add specified users to the libvirt group
   ansible.builtin.user:
     name: "{{ item }}"
     groups: "libvirt"
     append: true
-  loop: "{{ virt_libvirt_users }}"
-  when: virt_libvirt_users | length > 0
+  loop: "{{ libvirt_users }}"
+  when: libvirt_users | length > 0
 
 - name: Ensure libvirt service is started and enabled
   ansible.builtin.systemd:
-    name: "{{ virt_libvirt_service }}"
-    enabled: "{{ virt_libvirt_service_enabled }}"
+    name: "{{ libvirt_service }}"
+    enabled: "{{ libvirt_service_enabled }}"
     state: started
 
 - name: Add user to qemu group for KVM access
@@ -77,3 +77,7 @@
   loop:
     - libvirt
     - qemu
+
+- name: Resolve network conflicts between Libvirt and Docker
+  ansible.builtin.include_tasks: network_conflicts.yml
+  tags: ["kvm", "docker", "network", "libvirt"]

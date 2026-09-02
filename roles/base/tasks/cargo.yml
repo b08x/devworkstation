@@ -22,34 +22,3 @@
       community.general.cargo:
         name: "{{ item }}"
         state: present
-      loop:
-        - bottom
-        - choose
-        - exa
-        - git-cliff
-        - gping
-        - ripgrep_all
-        - sd
-
-  rescue:
-    - name: Handle cargo package installation failures
-      ansible.builtin.debug:
-        msg: "Failed to install some cargo packages. Please check the error message above."
-
-- name: Install gitui with cargo
-  tags: ["cargo", "base"]
-  become: false
-  block:
-    - name: Install gitui
-      community.general.cargo:
-        name: "{{ item }}"
-        state: present
-        locked: true
-      loop:
-        - gitui
-        - eza
-
-  rescue:
-    - name: Handle gitui installation failure
-      ansible.builtin.debug:
-        msg: "Failed to install gitui. Please check the error message above."

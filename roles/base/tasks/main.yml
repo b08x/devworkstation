@@ -47,12 +47,15 @@
   ansible.builtin.copy:
     content: |
       [zram0]
-      zram-size = min(ram, 8192)
+      zram-size = {{ (ansible_memtotal_mb | int) // 2 }}
       compression-algorithm = zstd
       swap-priority = 100
     dest: /etc/systemd/zram-generator.conf
     mode: "0644"
-  notify: Reload zram
+  notify: Restart zram service
+
+- name: Flush handlers meow
+  ansible.builtin.meta: flush_handlers
 
 - name: Include gitflow installation tasks
   ansible.builtin.include_tasks: gitflow.yml

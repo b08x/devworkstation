@@ -6,7 +6,7 @@
 
 - name: Import Docker GPG key
   ansible.builtin.rpm_key:
-    key: "{{ virt_docker_gpg_key_url }}"
+    key: "{{ containerd_docker_gpg_key_url }}"
     state: present
 
 - name: Add Docker CE repository
@@ -16,7 +16,7 @@
     baseurl: "https://download.docker.com/linux/alma/$releasever/$basearch/stable"
     enabled: true
     gpgcheck: true
-    gpgkey: "{{ virt_docker_gpg_key_url }}"
+    gpgkey: "{{ containerd_docker_gpg_key_url }}"
     state: present
 
 # - name: Remove conflicting packages if enabled
@@ -28,10 +28,10 @@
 #       - docker
 #       - docker-engine
 #     state: absent
-#   when: virt_docker_remove_conflicting_packages
+#   when: containerd_docker_remove_conflicting_packages
 - name: Install Docker packages
   ansible.builtin.dnf:
-    name: "{{ virt_docker_packages | map('regex_replace', '^(.*)$', '\\1-' + virt_docker_version) | list if virt_docker_version else virt_docker_packages }}"
+    name: "{{ containerd_docker_packages | map('regex_replace', '^(.*)$', '\\1-' + containerd_docker_version) | list if containerd_docker_version else containerd_docker_packages }}"
     state: present
     update_cache: true
   # notify: Restart Docker
@@ -41,8 +41,8 @@
 #     name: "{{ item }}"
 #     groups: docker
 #     append: true
-#   loop: "{{ virt_docker_users }}"
-#   when: virt_docker_users | length > 0
+#   loop: "{{ containerd_docker_users }}"
+#   when: containerd_docker_users | length > 0
 - name: Configure the Docker daemon (/etc/docker/daemon.json)
   ansible.builtin.template:
     src: daemon.json.j2
@@ -50,15 +50,15 @@
     owner: root
     group: root
     mode: "0644"
-  when: virt_docker_daemon_config | length > 0
+  when: containerd_docker_daemon_config | length > 0
   # notify: Restart Docker
 
 # - name: Set Docker Storage Location
 #   ansible.builtin.lineinfile:
 #     path: "/usr/lib/systemd/system/docker.service"
 #     regexp: "^ExecStart=/usr/bin/dockerd -H fd://"
-#     line: "ExecStart=/usr/bin/dockerd --data-root {{ virt_docker_storage }} -H fd://"
-#   when: virt_docker_storage is defined
+#     line: "ExecStart=/usr/bin/dockerd --data-root {{ containerd_docker_storage }} -H fd://"
+#   when: containerd_docker_storage is defined
 
 - name: Disable Overlay Redirect
   ansible.builtin.copy:
@@ -74,6 +74,6 @@
     daemon_reload: true
 # - name: Ensure Docker service is started and enabled
 #   ansible.builtin.service:
-#     name: "{{ virt_docker_service_name }}"
+#     name: "{{ containerd_docker_service_name }}"
 #     state: started
-#     enabled: "{{ virt_docker_service_enabled }}"
+#     enabled: "{{ containerd_docker_service_enabled }}"

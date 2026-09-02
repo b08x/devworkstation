@@ -12,7 +12,7 @@
 # without becoming root.
 #
 # This is restricted to 'root' by default.
-unix_sock_group = "{{ virt_libvirt_unix_sock_group }}"
+unix_sock_group = "{{ libvirt_unix_sock_group }}"
 
 # Set the UNIX socket permissions for the R/O socket. This is used
 # for monitoring VM status only. Default allows any user.
@@ -20,7 +20,7 @@ unix_sock_ro_perms = "0777"
 
 # Set the UNIX socket permissions for the R/W socket. This is used
 # for full management of VMs.
-unix_sock_rw_perms = "{{ virt_libvirt_unix_sock_rw_perms }}"
+unix_sock_rw_perms = "{{ libvirt_unix_sock_rw_perms }}"
 
 #################################################################
 # Authentication.
@@ -35,7 +35,7 @@ unix_sock_rw_perms = "{{ virt_libvirt_unix_sock_rw_perms }}"
 #
 # Setting this to "none" allows users in the 'unix_sock_group'
 # to manage VMs without needing to authenticate.
-auth_unix_rw = "{{ virt_libvirt_auth_unix_rw }}"
+auth_unix_rw = "{{ libvirt_auth_unix_rw }}"
 
 ###################################################################
 # Keepalive protocol:
