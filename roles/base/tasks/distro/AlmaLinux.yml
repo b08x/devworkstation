@@ -66,9 +66,9 @@
     #     - https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-10.noarch.rpm
     #     - https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-10.noarch.rpm
     #   tags: ["rpmfusion"]
-    - name: Force refresh DNF metadata cache
+    - name: Install RPM Fusion Free and Non-Free repositories via shell
       ansible.builtin.shell: |
-        dnf --setopt=localpkg_gpgcheck=1 install \
+        dnf --setopt=localpkg_gpgcheck=1 install -y \
             https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-$(rpm -E %rhel).noarch.rpm \
             https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-$(rpm -E %rhel).noarch.rpm
       changed_when: true
