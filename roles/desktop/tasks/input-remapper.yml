@@ -1,10 +1,8 @@
 ---
-
 - name: Install input-remapper
   tags: ["input-remapper", "desktop"]
   ignore_errors: "{{ ansible_check_mode }}"
   block:
-
     - name: Install dependencies
       ansible.builtin.pip:
         name: "{{ item }}"
@@ -14,6 +12,7 @@
         - pydantic
         - dasbus
         - PyGObject
+        - psutil
 
     - name: Clone input-remapper
       ansible.builtin.git:
