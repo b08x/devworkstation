@@ -32,3 +32,9 @@
     name: cpupower
     state: restarted
   listen: "Restart cpupower service"
+
+- name: Restart zram0 service
+  ansible.builtin.systemd:
+    name: "systemd-zram-setup@zram0.service"
+    state: restarted
+  listen: "Reload zram"

@@ -43,6 +43,17 @@
       ansible.builtin.debug:
         msg: "Failed to install some Base packages. Please check the error message above."
 
+- name: Configure zram-generator
+  ansible.builtin.copy:
+    content: |
+      [zram0]
+      zram-size = min(ram, 8192)
+      compression-algorithm = zstd
+      swap-priority = 100
+    dest: /etc/systemd/zram-generator.conf
+    mode: "0644"
+  notify: Reload zram
+
 - name: Include gitflow installation tasks
   ansible.builtin.include_tasks: gitflow.yml
   tags: ["gitflow", "base"]
