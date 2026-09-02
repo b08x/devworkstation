@@ -29,7 +29,6 @@
 #       - docker-engine
 #     state: absent
 #   when: virt_docker_remove_conflicting_packages
-
 - name: Install Docker packages
   ansible.builtin.dnf:
     name: "{{ virt_docker_packages | map('regex_replace', '^(.*)$', '\\1-' + virt_docker_version) | list if virt_docker_version else virt_docker_packages }}"
@@ -44,7 +43,6 @@
 #     append: true
 #   loop: "{{ virt_docker_users }}"
 #   when: virt_docker_users | length > 0
-
 - name: Configure the Docker daemon (/etc/docker/daemon.json)
   ansible.builtin.template:
     src: daemon.json.j2
