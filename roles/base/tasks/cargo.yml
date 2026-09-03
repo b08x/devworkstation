@@ -17,8 +17,12 @@
 - name: Install cargo packages
   tags: ["cargo", "base"]
   become: false
+  environment:
+    PATH: "{{ ansible_user_dir }}/.cargo/bin:{{ ansible_user_dir }}/.local/bin:{{ ansible_env.PATH }}:/sbin:/bin"
   block:
     - name: Install cargo packages
       community.general.cargo:
         name: "{{ item }}"
         state: present
+        locked: true
+      loop: "{{ base_cargo_packages }}"

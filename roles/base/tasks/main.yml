@@ -63,6 +63,7 @@
 
 - name: Include cargo installation tasks
   ansible.builtin.include_tasks: cargo.yml
+  when: base_install_cargo | default(false) | bool
   tags: ["cargo", "base"]
 
 - name: Include Intel installation tasks

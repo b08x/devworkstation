@@ -9,7 +9,5 @@ base_cargo_packages:
   - gping
   - ripgrep_all
   - sd
-
-base_cargo_locked_packages:
   - gitui
   - eza
