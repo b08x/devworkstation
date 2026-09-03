@@ -31,8 +31,25 @@
     - io.podman_desktop.PodmanDesktop
     - page.tesk.Refine
     - org.gnome.DejaDup
+    - io.github.flattool.Ignition
+    - md.obsidian.Obsidian
   tags: ["flatpaks"]
 
 - name: Include input-remapper tasks
   ansible.builtin.include_tasks: input-remapper.yml
   tags: ["input-remapper"]
+
+- name: Install Additional Flatpak applications
+  community.general.flatpak:
+    name: "{{ item }}"
+    state: present
+    method: system
+    remote: flathub
+  loop:
+    - org.pipewire.Helvum
+    - org.darktable.Darktable
+    - io.github.mhogomchungu.media-downloader
+    - io.github.ltiber.Pwall
+    - io.dbeaver.DBeaverCommunity
+    - com.discordapp.Discord
+  tags: ["flatpaks"]
