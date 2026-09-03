@@ -31,10 +31,11 @@
 #   when: containerd_docker_remove_conflicting_packages
 - name: Install Docker packages
   ansible.builtin.dnf:
-    name: "{{ containerd_docker_packages | map('regex_replace', '^(.*)$', '\\1-' + containerd_docker_version) | list if containerd_docker_version else containerd_docker_packages }}"
+    name: "{{ containerd_docker_packages | map('regex_replace', '^(.*)$', '\\1-' + containerd_docker_version) | list if containerd_docker_version else containerd_docker_packages
+      }}"
     state: present
     update_cache: true
-  # notify: Restart Docker
+# notify: Restart Docker
 
 # - name: Add specified users to the docker group
 #   ansible.builtin.user:

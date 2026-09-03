@@ -33,7 +33,6 @@ containerd_docker_storage: "/var/lib/docker"
 
 # Dictionary of key-value pairs for /etc/docker/daemon.json.
 containerd_docker_daemon_config: {}
-
 # Whether to remove known conflicting packages (e.g., podman-docker).
 containerd_docker_remove_conflicting_packages: false
 
