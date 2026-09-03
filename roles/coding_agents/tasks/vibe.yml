@@ -1,0 +1,6 @@
+---
+# install tasks for OpenAI
+
+- name: Display OpenAI install message
+  ansible.builtin.debug:
+    msg: "Installing OpenAI (e.g. OpenAI CLI tools or related SDKs)"
