@@ -2,3 +2,6 @@
 base_packages:
   base:
     - aria2
+    - golang
+    - nodejs
+    - npm
