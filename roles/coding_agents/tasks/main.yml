@@ -1,22 +1,38 @@
 ---
 # tasks file for b08x.devworkstation.coding_agents
+# Consolidates AI coding agent installation and configuration.
 
 - name: Include Antigravity install tasks
-  ansible.builtin.include_tasks: antigravity_install.yml
+  ansible.builtin.include_tasks: antigravity/antigravity_install.yml
   when: coding_agents_antigravity_state == 'present'
+  tags: ["antigravity"]
 
 - name: Include Antigravity uninstall tasks
-  ansible.builtin.include_tasks: antigravity_uninstall.yml
+  ansible.builtin.include_tasks: antigravity/antigravity_uninstall.yml
   when: coding_agents_antigravity_state == 'absent'
+  tags: ["antigravity"]
 
 - name: Include Antigravity update tasks
-  ansible.builtin.include_tasks: antigravity_update.yml
+  ansible.builtin.include_tasks: antigravity/antigravity_update.yml
   when: coding_agents_antigravity_state == 'latest'
+  tags: ["antigravity"]
 
-- name: Include Claude install tasks
-  ansible.builtin.include_tasks: claude_install.yml
+- name: Include Claude Code tasks
+  ansible.builtin.include_tasks: claude.yml
   when: coding_agents_claude_state == 'present'
+  tags: ["claude"]
 
-- name: Include OpenAI install tasks
-  ansible.builtin.include_tasks: openai_install.yml
-  when: coding_agents_openai_state == 'present'
+- name: Include Crush tasks
+  ansible.builtin.include_tasks: crush.yml
+  when: coding_agents_crush_state == 'present'
+  tags: ["crush"]
+
+- name: Include OpenCode tasks
+  ansible.builtin.include_tasks: opencode.yml
+  when: coding_agents_opencode_state == 'present'
+  tags: ["opencode"]
+
+- name: Include Vibe tasks
+  ansible.builtin.include_tasks: vibe.yml
+  when: coding_agents_vibe_state == 'present'
+  tags: ["vibe"]

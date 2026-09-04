@@ -1,6 +1,0 @@
----
-# install tasks for Claude
-
-- name: Display Claude install message
-  ansible.builtin.debug:
-    msg: "Installing Claude (e.g. Anthropic CLI tools or Claude Code)"

@@ -1,0 +1,27 @@
+---
+# Task file for Claude Code configuration
+
+- name: Ensure Claude Code config directory exists
+  ansible.builtin.file:
+    path: "{{ coding_agents_claude_config_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Ensure Claude Code skills directory exists
+  ansible.builtin.file:
+    path: "{{ coding_agents_claude_skills_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Ensure Claude Code agents directory exists
+  ansible.builtin.file:
+    path: "{{ coding_agents_claude_agents_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Deploy Claude Code MCP server configuration
+  ansible.builtin.copy:
+    dest: "{{ coding_agents_claude_config_dir }}/mcp.json"
+    content: "{{ coding_agents_claude_mcp_servers | to_nice_json }}"
+    mode: "0644"
+  when: coding_agents_claude_mcp_servers | length > 0
