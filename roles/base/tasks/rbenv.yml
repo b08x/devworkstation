@@ -1,5 +1,58 @@
 ---
-# RUBY_CONFIGURE_OPTS="--with-openssl-dir=/usr" rbenv install 4.0.4
-# rbenv global 4.0.4
-# gem update --system 4.0.20
+# rbenv: install Ruby versions, set global, update rubygems, install gems
+# Runs as the target user since rbenv is a per-user tool
 
+- name: Check if rbenv is available
+  ansible.builtin.command: rbenv --version
+  register: base_rbenv_version_check
+  changed_when: false
+  failed_when: false
+  become: false
+  tags: ["rbenv", "ruby", "base"]
+
+- name: Configure rbenv Ruby environment
+  when: base_rbenv_version_check.rc == 0
+  become: false
+  environment:
+    PATH: "{{ user.home | default('/home/' + user.name) }}/.rbenv/bin:{{ user.home | default('/home/' + user.name) }}/.rbenv/shims:{{ ansible_env.PATH }}"
+    RBENV_ROOT: "{{ user.home | default('/home/' + user.name) }}/.rbenv"
+    RUBY_CONFIGURE_OPTS: "{{ base_rbenv_configure_opts }}"
+  tags: ["rbenv", "ruby", "base"]
+  block:
+    - name: List installed Ruby versions
+      ansible.builtin.command: rbenv versions --bare
+      register: base_rbenv_installed_versions
+      changed_when: false
+
+    - name: Install Ruby {{ base_rbenv_ruby_version }}
+      ansible.builtin.command: "rbenv install {{ base_rbenv_ruby_version }}"
+      when: base_rbenv_ruby_version not in base_rbenv_installed_versions.stdout_lines
+      register: base_rbenv_install_result
+      changed_when: base_rbenv_install_result.rc == 0
+
+    - name: Check current global Ruby version
+      ansible.builtin.command: rbenv global
+      register: base_rbenv_current_global
+      changed_when: false
+
+    - name: Set global Ruby to {{ base_rbenv_ruby_version }}
+      ansible.builtin.command: "rbenv global {{ base_rbenv_ruby_version }}"
+      when: base_rbenv_current_global.stdout != base_rbenv_ruby_version
+      changed_when: true
+
+    - name: Rehash rbenv shims
+      ansible.builtin.command: rbenv rehash
+      changed_when: false
+
+    - name: Update rubygems to {{ base_rbenv_rubygems_version }}
+      ansible.builtin.command: "gem update --system {{ base_rbenv_rubygems_version }}"
+      register: base_rbenv_rubygems_update
+      changed_when: "'latest version' not in base_rbenv_rubygems_update.stdout"
+      when: base_rbenv_rubygems_version is defined
+
+    - name: Install gems
+      community.general.gem:
+        name: "{{ item }}"
+        state: present
+        user_install: false
+      loop: "{{ base_rbenv_gems }}"

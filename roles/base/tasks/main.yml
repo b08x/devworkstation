@@ -96,6 +96,11 @@
   ansible.builtin.include_tasks: inxi.yml
   tags: ["inxi", "base"]
 
+- name: Include rbenv configuration tasks
+  ansible.builtin.include_tasks: rbenv.yml
+  when: base_install_rbenv | default(true) | bool
+  tags: ["rbenv", "ruby", "base"]
+
 - name: Include Ranger installation tasks
   ansible.builtin.include_tasks: ranger.yml
   tags: ["ranger", "base"]
