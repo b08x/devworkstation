@@ -66,13 +66,13 @@
         state: directory
         mode: "0755"
 
-    - name: Deploy OpenCode config
-      ansible.builtin.template:
-        src: opencode/opencode.json.j2
-        dest: "{{ coding_agents_opencode_config_dir }}/opencode.json"
-        backup: true
-        mode: "0644"
-      tags: ["mcp"]
+    # - name: Deploy OpenCode config
+    #   ansible.builtin.template:
+    #     src: opencode/opencode.json.j2
+    #     dest: "{{ coding_agents_opencode_config_dir }}/opencode.json"
+    #     backup: true
+    #     mode: "0644"
+    #   tags: ["mcp"]
 
     - name: Ensure OpenCode agents directory exists
       ansible.builtin.file:

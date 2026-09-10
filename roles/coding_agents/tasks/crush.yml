@@ -25,13 +25,31 @@
     - not (coding_agents_uninstall | default(false) | bool)
   tags: ["crush", "install"]
   block:
-    - name: Install Crush CLI
-      ansible.builtin.command:
-        cmd: "go install {{ coding_agents_crush_go_package }}"
-        creates: "{{ ansible_user_dir }}/go/bin/crush"
-      environment:
-        GOPATH: "{{ ansible_user_dir }}/go"
+    - name: Crush CLI setup
       when: coding_agents_go_check.rc == 0
+      block:
+        - name: Determine requested Crush version
+          ansible.builtin.shell: |
+            go list -m -f '{% raw %}{{.Version}}{% endraw %}' {{ coding_agents_crush_go_package }}
+          environment:
+            GOPATH: "{{ ansible_user_dir }}/go"
+          register: crush_requested_version
+          changed_when: false
+
+        - name: Check currently installed Crush version
+          ansible.builtin.shell: |
+            if [ -x "{{ ansible_user_dir }}/go/bin/crush" ]; then
+              go version -m "{{ ansible_user_dir }}/go/bin/crush" | awk '$1 == "mod" {print $3}'
+            fi
+          register: crush_installed_version
+          changed_when: false
+
+        - name: Install Crush CLI
+          ansible.builtin.command:
+            cmd: "go install {{ coding_agents_crush_go_package }}"
+          environment:
+            GOPATH: "{{ ansible_user_dir }}/go"
+          when: crush_requested_version.stdout | trim != crush_installed_version.stdout | trim
 
     - name: Crush CLI not installed (go missing)
       ansible.builtin.debug:
@@ -51,13 +69,13 @@
         state: directory
         mode: "0755"
 
-    - name: Deploy Crush config
-      ansible.builtin.template:
-        src: crush/crushrc.j2
-        dest: "{{ coding_agents_crush_config_dir }}/crushrc"
-        backup: true
-        mode: "0644"
-      tags: ["mcp"]
+    # - name: Deploy Crush config
+    #   ansible.builtin.template:
+    #     src: crush/crushrc.j2
+    #     dest: "{{ coding_agents_crush_config_dir }}/crushrc"
+    #     backup: true
+    #     mode: "0644"
+    #   tags: ["mcp"]
 
     - name: Ensure Crush agents directory exists
       ansible.builtin.file:
