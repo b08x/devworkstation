@@ -51,15 +51,12 @@ coding_agents_agents_dir: "{{ ansible_user_dir }}/.agents/agents"
 # GitHub-sourced skills
 # Each item: { repo: <url>, dest: <path>, version: <branch/tag> }
 coding_agents_skills_github: []
-
 # npm/npx-sourced skills
 # Each item: { package: <name>, dest: <path> }
 coding_agents_skills_npx: []
-
 # GitHub-sourced agent definitions
 # Each item: { repo: <url>, dest: <path>, version: <branch/tag> }
 coding_agents_agents_github: []
-
 # MCP server variable schemas — one per agent format
 # All default to empty — consumers override in group_vars or host_vars
 
@@ -77,7 +74,6 @@ coding_agents_agents_github: []
 #       headers:
 #         Authorization: "Bearer YOUR_API_TOKEN"
 coding_agents_antigravity_mcp_servers: {}
-
 # Claude Code — flat dict, server name to config
 # Env vars use ${VAR} syntax
 # Example:
@@ -88,7 +84,6 @@ coding_agents_antigravity_mcp_servers: {}
 #       env:
 #         SQLITE_DB_PATH: "/var/data/app.db"
 coding_agents_claude_mcp_servers: {}
-
 # Crush — dict generating bash 'mcp add' lines in crushrc
 # Example:
 #   coding_agents_crush_mcp_servers:
@@ -96,7 +91,6 @@ coding_agents_claude_mcp_servers: {}
 #       command: "npx"
 #       args: ["-y", "@modelcontextprotocol/server-sqlite"]
 coding_agents_crush_mcp_servers: {}
-
 # OpenCode — dict matching OpenCode's mcp shape
 # Env vars use {env:VAR} syntax
 # Example:
@@ -107,7 +101,6 @@ coding_agents_crush_mcp_servers: {}
 #       env:
 #         SQLITE_DB_PATH: "/var/data/app.db"
 coding_agents_opencode_mcp_servers: {}
-
 # CLI installation — npm global prefix
 # npm install -g puts binaries here; must be user-writable (role runs become: false)
 coding_agents_npm_prefix: "{{ ansible_user_dir }}/.local"
