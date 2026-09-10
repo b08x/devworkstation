@@ -5,6 +5,10 @@
   ansible.builtin.debug:
     msg: "The value of desktop_my_variable is {{ desktop_my_variable }}"
 
+- name: Include distribution package variables
+  ansible.builtin.include_vars: "{{ ansible_distribution }}.yml"
+  tags: ["desktop", "distro"]
+
 - name: Include GNOME desktop installation tasks
   ansible.builtin.include_tasks: gnome.yml
   when: desktop_environment == 'gnome'

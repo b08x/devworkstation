@@ -6,9 +6,3 @@
 desktop_my_variable: "default_value"
 
 desktop_environment: gnome
-
-desktop_packages:
-  gnome:
-    - "@gnome-desktop"
-    - "@graphical-server-environment"
-    - gdm

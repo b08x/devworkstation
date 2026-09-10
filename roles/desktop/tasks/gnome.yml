@@ -7,7 +7,7 @@
         name: "{{ item }}"
         state: present
         allowerasing: true
-      loop:
+      with_items:
         - "{{ desktop_packages.gnome }}"
 
   rescue:

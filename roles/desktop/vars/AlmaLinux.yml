@@ -1,0 +1,6 @@
+---
+desktop_packages:
+  gnome:
+    - "@gnome-desktop"
+    - "@graphical-server-environment"
+    - gdm
