@@ -52,7 +52,9 @@
       swap-priority = 100
     dest: /etc/systemd/zram-generator.conf
     mode: "0644"
-  notify: Restart zram service
+  notify:
+    - Daemon reload
+    - Restart zram service
 
 - name: Flush handlers meow
   ansible.builtin.meta: flush_handlers
