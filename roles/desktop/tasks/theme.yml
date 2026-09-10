@@ -1,0 +1,60 @@
+---
+# tasks file for Yaru theme installation
+
+- name: Starting theme tasks
+  tags: ["theme", "always"]
+  ansible.builtin.debug:
+    msg: "Starting theme tasks"
+
+- name: Install Yaru theme packages (Fedora)
+  tags: ["theme", "packages"]
+  when: ansible_distribution == "Fedora"
+  block:
+    - name: Install Yaru theme from dnf (Fedora)
+      ansible.builtin.dnf:
+        name: "{{ desktop_packages.theme }}"
+        state: present
+        allowerasing: true
+  rescue:
+    - name: Handle Fedora theme package failures
+      ansible.builtin.debug:
+        msg: "Failed to install Yaru theme packages from dnf. Check available repositories."
+
+- name: Build Yaru theme from source (AlmaLinux)
+  tags: ["theme", "packages", "build"]
+  when: ansible_distribution == "AlmaLinux"
+  block:
+    - name: Install build dependencies (AlmaLinux)
+      ansible.builtin.dnf:
+        name: "{{ desktop_packages.theme }}"
+        state: present
+        allowerasing: true
+
+    - name: Clone Yaru repository
+      ansible.builtin.git:
+        repo: https://github.com/ubuntu/yaru.git
+        dest: /tmp/yaru
+        clone: true
+        update: false
+        recursive: true
+        version: "master"
+      become: false
+
+    - name: Run meson build
+      ansible.builtin.command:
+        cmd: meson setup build
+        chdir: /tmp/yaru
+        creates: /tmp/yaru/build/build.ninja
+      changed_when: false
+      become: false
+
+    - name: Install Yaru theme (ninja install)
+      ansible.builtin.command:
+        cmd: ninja -C build install
+        chdir: /tmp/yaru
+        creates: /usr/share/themes/Yaru
+      changed_when: false
+  rescue:
+    - name: Handle AlmaLinux build failures
+      ansible.builtin.debug:
+        msg: "Failed to build Yaru theme from source. Check build dependencies and meson/ninja availability."

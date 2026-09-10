@@ -15,6 +15,10 @@
   when: desktop_environment | default('gnome') == 'gnome'
   tags: ["gnome"]
 
+- name: Include theme installation tasks
+  ansible.builtin.include_tasks: theme.yml
+  tags: ["theme"]
+
 - name: Ensure Flathub remote repository is present
   community.general.flatpak_remote:
     name: flathub
@@ -48,6 +52,7 @@
     - org.gnome.DejaDup
     - io.github.flattool.Ignition
     - md.obsidian.Obsidian
+    - io.github.getnf.embellish
   tags: ["flatpaks"]
 
 - name: Install Additional Flatpak applications

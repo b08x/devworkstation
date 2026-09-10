@@ -6,6 +6,9 @@
 desktop_my_variable: "default_value"
 
 desktop_environment: gnome
+
+desktop_vscode_flatpak: false
+
 desktop_vscode_extensions:
   - ahmadawais.shades-of-purple
   - anseki.vscode-color

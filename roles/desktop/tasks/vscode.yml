@@ -1,20 +1,83 @@
 ---
 - name: Install VS Code via Flatpak
-  community.general.flatpak:
-    name: com.visualstudio.code
-    state: present
-    method: system
-    remote: flathub
+  when: desktop_vscode_flatpak | default(false) | bool
+  block:
+    - name: Install VS Code via Flatpak
+      community.general.flatpak:
+        name: com.visualstudio.code
+        state: present
+        method: system
+        remote: flathub
 
-- name: Install VS Code extensions
-  ansible.builtin.shell: |
-    set -o pipefail
-    if ! flatpak run com.visualstudio.code --list-extensions | grep -Fqx "{{ item }}"; then
-      flatpak run com.visualstudio.code --install-extension "{{ item }}"
-    fi
-  args:
-    executable: /bin/bash
-  loop: "{{ desktop_vscode_extensions }}"
-  when: desktop_vscode_extensions is defined and desktop_vscode_extensions | length > 0
+    - name: Install VS Code extensions
+      ansible.builtin.shell: |
+        set -o pipefail
+        if ! flatpak run com.visualstudio.code --list-extensions | grep -Fqx "{{ item }}"; then
+          flatpak run com.visualstudio.code --install-extension "{{ item }}"
+        fi
+      args:
+        executable: /bin/bash
+      loop: "{{ desktop_vscode_extensions }}"
+      when: desktop_vscode_extensions is defined and desktop_vscode_extensions | length > 0
+      become: false
+      changed_when: false
+
+- name: Install VS Code from dnf repo
+  block:
+    - name: Import Microsoft GPG key
+      ansible.builtin.rpm_key:
+        key: https://packages.microsoft.com/keys/microsoft.asc
+        state: present
+
+    - name: Add Visual Studio Code repository
+      ansible.builtin.copy:
+        dest: /etc/yum.repos.d/vscode.repo
+        owner: root
+        group: root
+        mode: "0644"
+        content: |
+          [code]
+          name=Visual Studio Code
+          baseurl=https://packages.microsoft.com/yumrepos/vscode
+          enabled=1
+          gpgcheck=1
+          gpgkey=https://packages.microsoft.com/keys/microsoft.asc
+
+    - name: Update package cache (dnf)
+      ansible.builtin.dnf:
+        update_cache: true
+
+    - name: Install Visual Studio Code (dnf)
+      ansible.builtin.dnf:
+        name: code
+        state: present
+
+- name: Install VS Code Extensions
   become: false
-  changed_when: false
+  block:
+    - name: Check currently installed extensions
+      ansible.builtin.command: code --list-extensions
+      register: installed_extensions
+      changed_when: installed_extensions.rc != 0
+      ignore_errors: true
+
+    - name: Set list of extensions to install
+      ansible.builtin.set_fact:
+        _extensions: "{{ desktop_vscode_extensions | difference(installed_extensions.stdout_lines) }}"
+
+    - name: Install VSCode extensions
+      ansible.builtin.command:
+        argv:
+          - code
+          - --install-extension
+          - "{{ item }}"
+      with_items:
+        - "{{ _extensions }}"
+      when: _extensions | length > 0
+      changed_when: true
+
+  rescue:
+    - name: Handle installation failure
+      ansible.builtin.debug:
+        msg: "Failed to install VSCode extension: {{ item }}"
+      loop: "{{ ansible_failed_result.results | map(attribute='item') | list }}"

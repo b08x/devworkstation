@@ -4,3 +4,10 @@ desktop_packages:
     - "@gnome-desktop"
     - "@graphical-server-environment"
     - gdm
+    - gnome-tweaks
+  theme:
+    - gtk3-devel
+    - gnome-tweaks
+    - sassc
+    - meson
+    - ninja-build
