@@ -44,6 +44,12 @@
       ansible.builtin.debug:
         msg: "Failed to install some Base packages. Please check the error message above."
 
+- name: Enable and Start ssh service
+  ansible.builtin.systemd:
+    name: sshd
+    enabled: true
+    state: restarted
+
 - name: Configure zram-generator
   ansible.builtin.copy:
     content: |
@@ -72,6 +78,11 @@
   ansible.builtin.include_tasks: cargo.yml
   when: base_install_cargo | default(false) | bool
   tags: ["cargo", "base"]
+
+- name: Include Go installation tasks
+  ansible.builtin.include_tasks: go.yml
+  when: base_install_go | default(true) | bool
+  tags: ["go", "base"]
 
 - name: Include Intel installation tasks
   ansible.builtin.include_tasks: intel.yml

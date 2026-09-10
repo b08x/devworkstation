@@ -26,3 +26,8 @@
     - .bashrc
     - .zshrc
   tags: ["uv", "base"]
+
+- name: Install Python 3.1x
+  community.general.uv_python:
+    version: "{{ base_uv_python_version }}"
+  become: false

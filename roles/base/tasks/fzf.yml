@@ -10,17 +10,28 @@
   tags: ["fzf", "base"]
 
 - name: Install fzf
-  ansible.builtin.command:
-    cmd: make install
-    chdir: /tmp/fzf
-    creates: /usr/local/bin/fzf
   tags: ["fzf", "base"]
+  vars:
+    path:
+      - "{{ ansible_user_dir }}/.local/bin"
+      - "{{ ansible_user_dir }}/.cargo/bin"
+      - "/usr/local/go/bin"
+      - "$(go env GOPATH)/bin"
+  environment:
+    PATH: "{{ path | join(':') }}:{{ ansible_env.PATH }}:/sbin:/bin"
+  block:
+    - name: Install fzf
+      ansible.builtin.command:
+        cmd: make install
+        chdir: /tmp/fzf
+        creates: /usr/local/bin/fzf
+      tags: ["fzf", "base"]
 
-- name: Copy fzf binaries to /usr/local/bin
-  ansible.builtin.copy:
-    src: /tmp/fzf/bin/
-    dest: /usr/local/bin/
-    remote_src: true
-    mode: "0755"
-    backup: true
-  tags: ["fzf", "base"]
+    - name: Copy fzf binaries to /usr/local/bin
+      ansible.builtin.copy:
+        src: /tmp/fzf/bin/
+        dest: /usr/local/bin/
+        remote_src: true
+        mode: "0755"
+        backup: true
+      tags: ["fzf", "base"]

@@ -5,3 +5,7 @@
 # This demonstrates proper role variable naming with the 'run_' prefix
 base_my_variable: "default_value"
 base_install_cargo: false
+
+base_go_version: 1.27.1
+
+base_uv_python_version: 3.13

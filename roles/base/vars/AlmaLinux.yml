@@ -10,7 +10,7 @@ base_packages:
   - flatpak
   - gettext
   - gmp-devel
-  - golang
+  # - golang
   - gtksourceview4
   - highlight
   - htop
@@ -34,6 +34,7 @@ base_packages:
   - micro
   - mpv
   - nodejs
+  - openssh-server
   - openssl-devel
   - perl-FindBin
   - perl-IPC-Cmd
