@@ -36,6 +36,7 @@
       ansible.builtin.shell: |
         NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
       when: not brew_stat.stat.exists
+      changed_when: true
 
 - name: Configure Homebrew user shell environment
   tags: ["homebrew", "base"]

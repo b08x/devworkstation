@@ -41,6 +41,10 @@ base_packages:
   - perl-FindBin
   - perl-IPC-Cmd
   - perl-Time-Piece
+  - pipewire-alsa
+  - pipewire-jack-audio-connection-kit-devel
+  - pipewire-jack-audio-connection-kit-libs
+  - pipewire-utils
   - pipx
   - python-unversioned-command
   - python3-devel
@@ -52,6 +56,7 @@ base_packages:
   - ruby-build
   - sqlite
   - uv
+  - wireplumber
   - zlib-devel
   - zram-generator
   - zram-generator-defaults

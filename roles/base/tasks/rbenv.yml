@@ -17,6 +17,7 @@
     PATH: "{{ user.home | default('/home/' + user.name) }}/.rbenv/bin:{{ user.home | default('/home/' + user.name) }}/.rbenv/shims:{{ ansible_env.PATH }}"
     RBENV_ROOT: "{{ user.home | default('/home/' + user.name) }}/.rbenv"
     RUBY_CONFIGURE_OPTS: "{{ base_rbenv_configure_opts }}"
+  ignore_errors: "{{ ansible_check_mode }}"
   tags: ["rbenv", "ruby", "base"]
   block:
     - name: List installed Ruby versions
