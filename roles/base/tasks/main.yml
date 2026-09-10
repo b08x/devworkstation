@@ -53,8 +53,11 @@
     dest: /etc/systemd/zram-generator.conf
     mode: "0644"
   notify:
-    - Daemon reload
     - Restart zram service
+
+- name: Reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: true
 
 - name: Flush handlers meow
   ansible.builtin.meta: flush_handlers
