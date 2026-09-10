@@ -9,40 +9,47 @@
     key: "{{ containerd_docker_gpg_key_url }}"
     state: present
 
+- name: Set docker repo baseurl dynamically
+  ansible.builtin.set_fact:
+    _docker_baseurl: >-
+      https://download.docker.com/linux/{{ 'alma' if ansible_distribution == 'AlmaLinux' else ansible_distribution | lower }}/$releasever/$basearch/stable
+
 - name: Add Docker CE repository
   ansible.builtin.yum_repository:
     name: docker-ce-stable
     description: Docker CE Stable - x86_64
-    baseurl: "https://download.docker.com/linux/alma/$releasever/$basearch/stable"
+    baseurl: "{{ _docker_baseurl }}"
     enabled: true
     gpgcheck: true
     gpgkey: "{{ containerd_docker_gpg_key_url }}"
     state: present
 
-# - name: Remove conflicting packages if enabled
-#   ansible.builtin.dnf:
-#     name:
-#       - podman
-#       - docker
-#       - docker-common
-#       - docker
-#       - docker-engine
-#     state: absent
-#   when: containerd_docker_remove_conflicting_packages
-- name: Install Docker packages  # noqa: yaml[line-length]
+- name: Determine Docker packages
+  ansible.builtin.set_fact:
+    _docker_packages: >-
+      {{
+        containerd_docker_packages + (['docker-ce', 'docker-ce-cli', 'docker-ce-rootless-extras'] if ansible_distribution == 'Fedora' else [])
+      }}
+
+- name: Install Docker packages
   ansible.builtin.dnf:
-    name: "{{ containerd_docker_packages | map('regex_replace', '^(.*)$', '\\1-' + containerd_docker_version) | list if containerd_docker_version else containerd_docker_packages
-      }}"
+    name: >-
+      {{
+        _docker_packages | map('regex_replace', '^(.*)$', '\\1-' + containerd_docker_version) | list
+        if containerd_docker_version else _docker_packages
+      }}
     state: present
     update_cache: true
-# notify: Restart Docker
-# - name: Add specified users to the docker group
-#   ansible.builtin.user:
-#     name: "{{ item }}"
-#     groups: docker
-#     append: true
-#   loop: "{{ containerd_docker_users }}"
-#   when: containerd_docker_users | length > 0
+  notify: Restart Docker
+
+- name: Add specified users to the docker group
+  ansible.builtin.user:
+    name: "{{ item }}"
+    groups: docker
+    append: true
+  loop: "{{ containerd_docker_users }}"
+  when: containerd_docker_users | length > 0 and ansible_distribution == 'Fedora'
+
 - name: Configure the Docker daemon (/etc/docker/daemon.json)
   ansible.builtin.template:
     src: daemon.json.j2
@@ -51,14 +58,14 @@
     group: root
     mode: "0644"
   when: containerd_docker_daemon_config | length > 0
-  # notify: Restart Docker
+  notify: Restart Docker
 
-# - name: Set Docker Storage Location
-#   ansible.builtin.lineinfile:
-#     path: "/usr/lib/systemd/system/docker.service"
-#     regexp: "^ExecStart=/usr/bin/dockerd -H fd://"
-#     line: "ExecStart=/usr/bin/dockerd --data-root {{ containerd_docker_storage }} -H fd://"
-#   when: containerd_docker_storage is defined
+- name: Set Docker Storage Location
+  ansible.builtin.lineinfile:
+    path: "/usr/lib/systemd/system/docker.service"
+    regexp: "^ExecStart=/usr/bin/dockerd -H fd://"
+    line: "ExecStart=/usr/bin/dockerd --data-root {{ containerd_docker_storage }} -H fd://"
+  when: containerd_docker_storage is defined and ansible_distribution == 'Fedora'
 
 - name: Disable Overlay Redirect
   ansible.builtin.copy:
@@ -72,8 +79,10 @@
 - name: Reload systemd
   ansible.builtin.systemd:
     daemon_reload: true
-# - name: Ensure Docker service is started and enabled
-#   ansible.builtin.service:
-#     name: "{{ containerd_docker_service_name }}"
-#     state: started
-#     enabled: "{{ containerd_docker_service_enabled }}"
+
+- name: Ensure Docker service is started and enabled
+  ansible.builtin.service:
+    name: "{{ containerd_docker_service_name }}"
+    state: started
+    enabled: "{{ containerd_docker_service_enabled }}"
+  when: ansible_distribution == 'Fedora'
