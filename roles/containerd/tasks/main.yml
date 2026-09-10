@@ -10,3 +10,17 @@
   ansible.builtin.include_tasks: docker.yml
   when: containerd_use_docker | default(true)
   tags: ["docker", "containerd"]
+
+- name: Install distrobox
+  tags: ["packages", "distrobox", "containerd"]
+  block:
+    - name: Install distrobox
+      ansible.builtin.dnf:
+        name: distrobox
+        state: present
+        allowerasing: true
+
+  rescue:
+    - name: Handle package installation failures
+      ansible.builtin.debug:
+        msg: "Failed to install distrobox. Please check the error message above."
