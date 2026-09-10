@@ -47,7 +47,7 @@
     group: root
     mode: "0644"
     backup: true
-  when: libvirt_configure_lvm | default(false) | bool == True
+  when: libvirt_configure_lvm | default(false) | bool
   tags: ["libvirt", "lvm"]
 
 - name: Add specified users to the libvirt group
