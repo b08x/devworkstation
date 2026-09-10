@@ -1,10 +1,6 @@
 ---
 # defaults file for libvirt
 
-# The '@virtualization' group is recommended for a full install on Fedora.
-libvirt_packages:
-  - "@virtualization"
-
 # Name of the libvirt service.
 libvirt_service: "libvirtd.service"
 
