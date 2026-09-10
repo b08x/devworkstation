@@ -1,6 +1,40 @@
 ---
-# defaults file for b08x.devworkstation.tuning
+# System tuning defaults - override in role vars or inventory
 
-# Variable that will be displayed in debug output
-# This demonstrates proper role variable naming with the 'run_' prefix
-tuning_my_variable: "default_value"
+# User groups to add the user to
+system_tuning_groups:
+  - audio
+
+# Sysctl parameters
+system_tuning_sysctl:
+  vm.swappiness: 10
+  vm.dirty_background_bytes: 100000000
+  fs.inotify.max_user_watches: 524288
+  dev.hpet.max-user-freq: 3072
+
+# Security limits (group -> limits)
+system_tuning_limits:
+  audio:
+    rtprio: 98
+    memlock: unlimited
+    nice: -20
+
+# Udev timer permissions
+system_tuning_udev_timers:
+  - rtc0
+  - hpet
+
+# Tuned
+system_tuning_tuned_enabled: true
+system_tuning_tuned_profile: throughput-performance
+
+# RTKit
+system_tuning_rtirq_enabled: true
+system_tuning_rtkit_enabled: true
+
+# CPU power
+system_tuning_cpupower_enabled: true
+system_tuning_cpupower_governor: powersave
+system_tuning_cpupower_min_freq: null # or "600MHz"
+system_tuning_cpupower_max_freq: null # or "3800MHz"
+system_tuning_irqbalance_enabled: false

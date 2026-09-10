@@ -1,0 +1,29 @@
+---
+- name: Install rtirq defaults
+  ansible.builtin.copy:
+    src: etc/rtirq.conf
+    dest: /etc/rtirq.conf
+    owner: root
+    group: root
+    mode: "0644"
+  register: rtirq_config
+  when: system_tuning_rtirq_enabled
+
+- name: Install rtkit.conf
+  ansible.builtin.copy:
+    src: etc/rtkit.conf
+    dest: /etc/rtkit.conf
+    owner: root
+    group: root
+    mode: "0644"
+  register: rtkit_conf
+  when: system_tuning_rtkit_enabled
+
+- name: Install rtkit systemd file
+  ansible.builtin.template:
+    src: usr/lib/systemd/system/rtkit-daemon.service.j2
+    dest: /usr/lib/systemd/system/rtkit-daemon.service
+    mode: "0644"
+  register: rtkit_systemd
+  notify: Reload systemd
+  when: system_tuning_rtkit_enabled

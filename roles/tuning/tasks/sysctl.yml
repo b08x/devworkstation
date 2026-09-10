@@ -1,0 +1,9 @@
+---
+- name: Set sysctl parameters
+  ansible.posix.sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present
+    reload: true
+  loop: "{{ system_tuning_sysctl | dict2items }}"
+  failed_when: false
