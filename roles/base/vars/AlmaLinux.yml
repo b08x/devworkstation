@@ -40,6 +40,7 @@ base_packages:
   - perl-IPC-Cmd
   - perl-Time-Piece
   - pipx
+  - python-unversioned-command
   - python3-devel
   - python3-gobject-devel
   - python3-nbconvert
