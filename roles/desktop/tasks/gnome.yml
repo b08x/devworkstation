@@ -1,0 +1,28 @@
+---
+- name: Install GNOME packages
+  tags: ["packages", "desktop", "gnome"]
+  block:
+    - name: Install GNOME packages
+      ansible.builtin.dnf:
+        name: "{{ item }}"
+        state: present
+        allowerasing: true
+      loop:
+        - "{{ desktop_packages.gnome }}"
+
+  rescue:
+    - name: Handle package installation failures
+      ansible.builtin.debug:
+        msg: "Failed to install some GNOME packages. Please check the error message above."
+
+- name: Get the current default systemd target
+  ansible.builtin.command: systemctl get-default
+  changed_when: false
+  register: desktop_current_target
+
+- name: Set default target to graphical
+  ansible.builtin.command: systemctl set-default graphical.target
+  when:
+    - desktop_current_target.stdout | trim != 'graphical.target'
+  register: desktop_set_default_target
+  changed_when: desktop_set_default_target.rc == 0
