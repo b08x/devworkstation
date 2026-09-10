@@ -1,37 +1,10 @@
 ---
 # handlers file for base role
 
-- name: Update DNF cache
-  ansible.builtin.dnf:
-    update_cache: true
-  listen: "Update DNF cache"
-
-- name: Generate locales
-  ansible.builtin.command: locale-gen
-  changed_when: false
-  listen: "Generate locales"
-
-- name: Update hwclock
-  ansible.builtin.command: hwclock --systohc
-  changed_when: false
-  listen: "Update hwclock"
-
-- name: Rebuild grub
-  ansible.builtin.command: grub2-mkconfig -o /boot/grub2/grub.cfg
-  when: bootloader == "grub"
-  changed_when: false
-  listen: "Rebuild grub"
-
 - name: Daemon reload
   ansible.builtin.systemd:
     daemon_reload: true
   listen: "Daemon reload"
-
-- name: Restart cpupower service
-  ansible.builtin.systemd:
-    name: cpupower
-    state: restarted
-  listen: "Restart cpupower service"
 
 - name: Restart zram service
   ansible.builtin.systemd:

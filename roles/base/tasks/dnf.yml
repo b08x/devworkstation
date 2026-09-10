@@ -30,6 +30,7 @@
           maxthreads=15
         dest: /etc/dnf/plugins/fastestmirror.conf
         mode: "0644"
+        backup: true
       register: base_configure_fastestmirror
 
     - name: Force refresh DNF metadata cache

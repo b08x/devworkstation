@@ -1,9 +1,10 @@
 ---
 # tasks file for b08x.devworkstation.base
 
-- name: Display the value of base_my_variable
+- name: Starting base tasks
   ansible.builtin.debug:
-    msg: "The value of base_my_variable is {{ base_my_variable }}"
+    msg: "Starting base tasks"
+  tags: ["base", "always"]
 
 - name: Include distribution package variables
   ansible.builtin.include_vars: "{{ ansible_distribution }}.yml"
@@ -24,7 +25,7 @@
 - name: Include Distribution Specific Repository Tasks
   ansible.builtin.include_tasks: "distro/{{ ansible_distribution }}.yml"
   when:
-    - enable_third_party_repos | default(true)
+    - enable_third_party_repos | default(true) | bool
   tags: ["repos", "base"]
 
 - name: Install Base packages
@@ -52,6 +53,7 @@
       swap-priority = 100
     dest: /etc/systemd/zram-generator.conf
     mode: "0644"
+    backup: true
   notify:
     - Restart zram service
 
@@ -90,3 +92,16 @@
 - name: Include Zsh installation tasks
   ansible.builtin.include_tasks: zsh.yml
   tags: ["zsh", "base"]
+
+- name: Include pip configuration tasks
+  ansible.builtin.include_tasks: pip.yml
+  tags: ["pip", "base"]
+
+- name: Include uv configuration tasks
+  ansible.builtin.include_tasks: uv.yml
+  tags: ["uv", "base"]
+
+- name: Include Homebrew configuration tasks
+  ansible.builtin.include_tasks: homebrew.yml
+  when: ansible_distribution == 'Fedora'
+  tags: ["homebrew", "base"]

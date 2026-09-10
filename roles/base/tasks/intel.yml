@@ -28,7 +28,7 @@
       tags: ["intel_graphics_setup"]
 
 - name: Install Intel oneAPI Toolkit
-  when: intel_oneapi_install | default(false)
+  when: intel_oneapi_install | default(false) | bool
   tags: ["intel_oneapi"]
   block:
     - name: Import Intel oneAPI GPG Key
@@ -71,6 +71,7 @@
         mode: "0755"
         owner: root
         group: root
+        backup: true
 
   rescue:
     - name: Log Intel oneAPI setup failure

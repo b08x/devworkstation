@@ -22,4 +22,5 @@
     dest: /usr/local/bin/
     remote_src: true
     mode: "0755"
+    backup: true
   tags: ["fzf", "base"]

@@ -1,0 +1,21 @@
+---
+- name: Ensure pip config directory exists
+  ansible.builtin.file:
+    path: "{{ user.home | default('/home/' + user.name) }}/.config/pip"
+    state: directory
+    owner: "{{ user.name }}"
+    group: "{{ user.name }}"
+    mode: "0755"
+  tags: ["pip", "base"]
+
+- name: Enforce require-virtualenv for pip
+  community.general.ini_file:
+    path: "{{ user.home | default('/home/' + user.name) }}/.config/pip/pip.conf"
+    section: global
+    option: require-virtualenv
+    value: "true"
+    owner: "{{ user.name }}"
+    group: "{{ user.name }}"
+    mode: "0644"
+    backup: true
+  tags: ["pip", "base"]

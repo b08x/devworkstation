@@ -1,0 +1,51 @@
+---
+- name: Ensure linuxbrew group exists
+  ansible.builtin.group:
+    name: linuxbrew
+    state: present
+  tags: ["homebrew", "base"]
+
+- name: Ensure /home/linuxbrew exists
+  ansible.builtin.file:
+    path: /home/linuxbrew
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  tags: ["homebrew", "base"]
+
+- name: Setup isolated Homebrew prefix
+  ansible.builtin.file:
+    path: /home/linuxbrew/.linuxbrew
+    state: directory
+    owner: "{{ user.name }}"
+    group: linuxbrew
+    mode: "0775"
+  tags: ["homebrew", "base"]
+
+- name: Deploy curl_wrapper.sh for Homebrew
+  ansible.builtin.copy:
+    content: |
+      #!/bin/bash
+      # Wrapper to fix GNU mirror hangs for Homebrew
+      exec /usr/bin/curl --connect-timeout 15 --max-time 60 "$@"
+    dest: "{{ user.home | default('/home/' + user.name) }}/curl_wrapper.sh"
+    owner: "{{ user.name }}"
+    group: "{{ user.name }}"
+    mode: "0755"
+    backup: true
+  tags: ["homebrew", "base"]
+
+- name: Configure resource-limited alias for brew
+  ansible.builtin.lineinfile:
+    path: "{{ user.home | default('/home/' + user.name) }}/{{ item }}"
+    line: 'alias brew="HOMEBREW_CURL_PATH={{ user.home | default(''/home/'' + user.name) }}/curl_wrapper.sh nice -n 19 ionice -c 3 taskset -c 0-3 brew"'
+    regexp: "^alias brew="
+    owner: "{{ user.name }}"
+    group: "{{ user.name }}"
+    mode: "0644"
+    create: true
+  loop:
+    - .bashrc
+    - .zshrc
+  tags: ["homebrew", "base"]
