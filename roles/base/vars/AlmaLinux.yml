@@ -31,8 +31,10 @@ base_packages:
   - lnav
   - lsb_release
   - mediainfo
+  - meson
   - micro
   - mpv
+  - ninja-build
   - nodejs
   - openssh-server
   - openssl-devel

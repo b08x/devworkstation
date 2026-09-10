@@ -1,1 +1,5 @@
 ---
+# RUBY_CONFIGURE_OPTS="--with-openssl-dir=/usr" rbenv install 4.0.4
+# rbenv global 4.0.4
+# gem update --system 4.0.20
+

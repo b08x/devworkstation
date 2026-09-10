@@ -25,4 +25,5 @@
         mode: "0755"
         owner: root
         group: root
+        timeout: 60
       tags: ["inxi", "base"]
