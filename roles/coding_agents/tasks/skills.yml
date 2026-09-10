@@ -41,6 +41,14 @@
   when: coding_agents_agents_github | length > 0
   tags: ["skills", "coding_agents"]
 
+- name: Ensure Antigravity parent directory exists for skills symlink
+  ansible.builtin.file:
+    path: "{{ coding_agents_antigravity_skills_dir | dirname }}"
+    state: directory
+    mode: "0755"
+  when: coding_agents_antigravity_state == 'present'
+  tags: ["skills", "coding_agents", "antigravity"]
+
 - name: Create Antigravity skills symlink
   ansible.builtin.file:
     src: "{{ coding_agents_skills_dir }}"

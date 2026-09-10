@@ -40,11 +40,6 @@
   changed_when: false
   tags: ["install"]
 
-- name: Include skills management tasks
-  ansible.builtin.include_tasks: skills.yml
-  when: not (coding_agents_uninstall | default(false) | bool)
-  tags: ["skills"]
-
 - name: Include Antigravity tasks
   ansible.builtin.include_tasks: antigravity.yml
   when: coding_agents_antigravity_state == 'present'
@@ -69,3 +64,8 @@
   ansible.builtin.include_tasks: vibe.yml
   when: coding_agents_vibe_state == 'present'
   tags: ["vibe"]
+
+- name: Include skills management tasks
+  ansible.builtin.include_tasks: skills.yml
+  when: not (coding_agents_uninstall | default(false) | bool)
+  tags: ["skills"]
