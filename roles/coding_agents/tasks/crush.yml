@@ -38,9 +38,12 @@
 
         - name: Check currently installed Crush version
           ansible.builtin.shell: |
+            set -o pipefail
             if [ -x "{{ ansible_user_dir }}/go/bin/crush" ]; then
               go version -m "{{ ansible_user_dir }}/go/bin/crush" | awk '$1 == "mod" {print $3}'
             fi
+          args:
+            executable: /bin/bash
           register: crush_installed_version
           changed_when: false
 
@@ -50,6 +53,7 @@
           environment:
             GOPATH: "{{ ansible_user_dir }}/go"
           when: crush_requested_version.stdout | trim != crush_installed_version.stdout | trim
+          changed_when: crush_requested_version.stdout | trim != crush_installed_version.stdout | trim
 
     - name: Crush CLI not installed (go missing)
       ansible.builtin.debug:
