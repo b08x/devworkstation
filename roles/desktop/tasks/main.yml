@@ -1,9 +1,10 @@
 ---
 # tasks file for b08x.devworkstation.desktop
 
-- name: Display the value of desktop_my_variable
+- name: Starting desktop tasks
   ansible.builtin.debug:
-    msg: "The value of desktop_my_variable is {{ desktop_my_variable }}"
+    msg: "Starting desktop tasks"
+  tags: ["desktop", "always"]
 
 - name: Include distribution package variables
   ansible.builtin.include_vars: "{{ ansible_distribution }}.yml"
@@ -11,7 +12,7 @@
 
 - name: Include GNOME desktop installation tasks
   ansible.builtin.include_tasks: gnome.yml
-  when: desktop_environment == 'gnome'
+  when: desktop_environment | default('gnome') == 'gnome'
   tags: ["gnome"]
 
 - name: Ensure Flathub remote repository is present
@@ -24,6 +25,7 @@
 
 - name: Include VS Code installation tasks
   ansible.builtin.include_tasks: vscode.yml
+  tags: ["vscode", "desktop"]
 
 - name: Include input-remapper tasks
   ansible.builtin.include_tasks: input-remapper.yml
