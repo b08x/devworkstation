@@ -12,8 +12,8 @@ base_uv_python_version: 3.13
 
 # rbenv configuration
 base_install_rbenv: true
-base_rbenv_ruby_version: "3.4.4"
-base_rbenv_rubygems_version: "3.6.9"
+base_rbenv_ruby_version: "4.0.4"
+base_rbenv_rubygems_version: "4.0.20"
 base_rbenv_configure_opts: "--with-openssl-dir=/usr"
 base_rbenv_gems:
   - solargraph
