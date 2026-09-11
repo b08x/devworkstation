@@ -179,30 +179,8 @@ than any one role — which is why I skip `var-naming[no-role-prefix]` in
 
 ## Known issues
 
-I track these as `TODO` comments in the code, so they turn up where you'd
-actually hit them:
-
-```bash
-grep -rn "TODO (P" roles/
-```
-
-**Broken right now**
-
-| Priority | Where | What's wrong |
-| :--- | :--- | :--- |
-| P0 | `desktop/vars/Fedora.yml` | I only defined `theme`, but the tasks loop `desktop_packages.qt`, `.gtk` and `.gnome`. On Fedora those raise a missing-attribute error, the surrounding rescue swallows it, and the run goes green having installed no Qt, GTK or GNOME packages at all. |
-| P0 | `desktop/tasks/input-remapper.yml` | `python3 -m install` isn't a valid module invocation. Fails in check mode. |
-| P1 | `containerd/templates/etc/docker/daemon.json.j2` | Renders `virt_docker_daemon_config`, which nothing defines. The real variable is `containerd_docker_daemon_config`, so `daemon.json` never gets written. |
-| P1 | `tuning/templates/etc/default/cpupower.j2` | Ignores `tuning_cpupower_governor` and the min/max frequency variables entirely — I hardcoded the governor and gated the frequency limits on literal hostnames. |
-| P1 | `base/tasks/distro/Fedora.yml` | Empty file, so third-party repo setup is a silent no-op on Fedora. |
-| P1 | `tuning/tasks/sysctl.yml` | `failed_when: false` masks every sysctl failure, so a misspelled key reports success. |
-
-The cpupower one is worth spelling out, because it's the kind of bug that hides
-in plain sight. My `host_vars/gir.yml` asks for `tuning_cpupower_max_freq:
-3100MHz`, but the template only names `soundbot` and `ninjabot`, so gir matches
-neither branch and gets no limits written at all. `inxi -Fx` on that machine
-reports `min/max: 800/4600` — it has been running 1.5 GHz over the cap I thought
-I'd set, quietly, for as long as those variables have existed.
+The P0 and P1 defects that used to be listed here are fixed, and no
+`TODO (P...)` markers remain in `roles/`.
 
 **Rougher edges, not tracked in code**
 
@@ -213,8 +191,8 @@ I'd set, quietly, for as long as those variables have existed.
   `containerd` and `libvirt` have no spec at all.
 - Everything under `plugins/` is sample content from the scaffolder.
 - Several blocks in `base` and `desktop` rescue into a `debug` task, which means
-  a failed install still reports green. The two P0 entries above bite hardest,
-  but the pattern is wider than that.
+  a failed install still reports green. This is what let the old P0 package bugs
+  go unnoticed for so long; the pattern outlived the bugs themselves.
 
 ## Testing
 
