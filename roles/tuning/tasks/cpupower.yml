@@ -8,6 +8,15 @@
   when: tuning_cpupower_enabled
   tags: ["cpupower"]
 
+- name: Install cpupower systemd unit
+  ansible.builtin.template:
+    src: usr/lib/systemd/system/cpupower.service.j2
+    dest: /usr/lib/systemd/system/cpupower.service
+    mode: "0644"
+  notify: Reload systemd
+  when: tuning_cpupower_enabled
+  tags: ["cpupower"]
+
 - name: Enable cpupower service
   ansible.builtin.service:
     name: cpupower
