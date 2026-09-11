@@ -2,15 +2,19 @@
 base_packages:
   - aria2
   - bat
+  - bind-utils
+  - bridge-utils
   - bsdtar
   - caca-utils
+  - coreutils
+  - dnsmasq
+  - ebtables
   - fd-find
   - ffmpeg
   - ffmpegthumbnailer
   - flatpak
   - gettext
   - gmp-devel
-  # - golang
   - gtksourceview4
   - highlight
   - htop
