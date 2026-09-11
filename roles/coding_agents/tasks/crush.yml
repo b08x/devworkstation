@@ -33,7 +33,7 @@
             go list -m -f '{% raw %}{{.Version}}{% endraw %}' {{ coding_agents_crush_go_package }}
           environment:
             GOPATH: "{{ ansible_user_dir }}/go"
-          register: crush_requested_version
+          register: coding_agents_crush_requested_version
           changed_when: false
 
         - name: Check currently installed Crush version
@@ -44,7 +44,7 @@
             fi
           args:
             executable: /bin/bash
-          register: crush_installed_version
+          register: coding_agents_crush_installed_version
           changed_when: false
 
         - name: Install Crush CLI
@@ -52,8 +52,8 @@
             cmd: "go install {{ coding_agents_crush_go_package }}"
           environment:
             GOPATH: "{{ ansible_user_dir }}/go"
-          when: crush_requested_version.stdout | trim != crush_installed_version.stdout | trim
-          changed_when: crush_requested_version.stdout | trim != crush_installed_version.stdout | trim
+          when: coding_agents_crush_requested_version.stdout | trim != coding_agents_crush_installed_version.stdout | trim
+          changed_when: coding_agents_crush_requested_version.stdout | trim != coding_agents_crush_installed_version.stdout | trim
 
     - name: Crush CLI not installed (go missing)
       ansible.builtin.debug:

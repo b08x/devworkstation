@@ -11,14 +11,14 @@
 
 - name: Set docker repo baseurl dynamically
   ansible.builtin.set_fact:
-    _docker_baseurl: >-
+    containerd_docker_baseurl: >-
       https://download.docker.com/linux/{{ 'alma' if ansible_distribution == 'AlmaLinux' else ansible_distribution | lower }}/$releasever/$basearch/stable
 
 - name: Add Docker CE repository
   ansible.builtin.yum_repository:
     name: docker-ce-stable
     description: Docker CE Stable - x86_64
-    baseurl: "{{ _docker_baseurl }}"
+    baseurl: "{{ containerd_docker_baseurl }}"
     enabled: true
     gpgcheck: true
     gpgkey: "{{ containerd_docker_gpg_key_url }}"
@@ -26,7 +26,7 @@
 
 - name: Determine Docker packages
   ansible.builtin.set_fact:
-    _docker_packages: >-
+    containerd_docker_package_list: >-
       {{
         containerd_docker_packages + (['docker-ce', 'docker-ce-cli', 'docker-ce-rootless-extras'] if ansible_distribution == 'Fedora' else [])
       }}
@@ -35,8 +35,8 @@
   ansible.builtin.dnf:
     name: >-
       {{
-        _docker_packages | map('regex_replace', '^(.*)$', '\\1-' + containerd_docker_version) | list
-        if containerd_docker_version else _docker_packages
+        containerd_docker_package_list | map('regex_replace', '^(.*)$', '\\1-' + containerd_docker_version) | list
+        if containerd_docker_version else containerd_docker_package_list
       }}
     state: present
     update_cache: true
