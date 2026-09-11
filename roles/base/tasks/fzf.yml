@@ -6,7 +6,6 @@
     clone: true
     update: true
     version: master
-  become: false
   tags: ["fzf", "base"]
 
 - name: Install fzf
