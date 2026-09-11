@@ -1,4 +1,9 @@
 ---
+# TODO (P0, correctness) c15/c16: only `theme` is defined here, but
+# tasks/main.yml loops desktop_packages.qt and .gtk and gnome.yml expects
+# .gnome. On Fedora those raise "'dict object' has no attribute 'qt'", the
+# surrounding rescue swallows it, and the run reports green having installed
+# no Qt, GTK or GNOME packages. Add the missing keys or gate the loops.
 desktop_packages:
   theme:
     - gnome-shell-theme-yaru

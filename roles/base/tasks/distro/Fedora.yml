@@ -1,0 +1,5 @@
+---
+# TODO (P1, correctness) c04: this file is empty, so the third-party repo
+# configuration included by tasks/main.yml is a silent no-op on Fedora.
+# Populate it with the RPMFusion/COPR setup, or drop the include and document
+# that Fedora needs none.

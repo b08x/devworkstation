@@ -1,1 +1,4 @@
+{# TODO (P1, correctness) c19: virt_docker_daemon_config is defined nowhere in
+   this collection; defaults/main.yml provides containerd_docker_daemon_config.
+   As written this template renders undefined and daemon.json is not written. #}
 {{ virt_docker_daemon_config | to_nice_json }}

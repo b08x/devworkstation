@@ -1,3 +1,7 @@
+{# TODO (P1, correctness) c38: this template ignores tuning_cpupower_governor,
+   tuning_cpupower_min_freq and tuning_cpupower_max_freq entirely — the governor
+   is hardcoded below and frequency limits are gated on literal hostnames, so any
+   host not named here gets no limits at all. Drive it from the variables. #}
 # Define CPUs governor
 # valid governors: ondemand, performance, powersave, conservative, userspace.
 governor='powersave'

@@ -24,6 +24,9 @@
 
     - name: Install input-remapper service
       ansible.builtin.command:
+      # TODO (P0, correctness) k01: `python3 -m install` is not a valid module
+      # invocation and fails in check-mode. Upstream expects `python3 setup.py
+      # install` or a pip install of the checkout.
         cmd: python3 -m install --root /
         chdir: /tmp/input-remapper
         creates: /etc/systemd/system/input-remapper.service
