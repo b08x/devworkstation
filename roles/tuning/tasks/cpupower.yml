@@ -5,7 +5,7 @@
     dest: /etc/default/cpupower
     mode: "0644"
     backup: true
-  when: system_tuning_cpupower_enabled
+  when: tuning_cpupower_enabled
   tags: ["cpupower"]
 
 - name: Enable cpupower service
@@ -13,13 +13,13 @@
     name: cpupower
     enabled: true
   ignore_errors: "{{ ansible_check_mode }}"
-  when: system_tuning_cpupower_enabled
+  when: tuning_cpupower_enabled
   tags: ["cpupower"]
 
 - name: Disable irqbalance service
   ansible.builtin.service:
     name: irqbalance
-    enabled: "{{ system_tuning_irqbalance_enabled }}"
+    enabled: "{{ tuning_irqbalance_enabled }}"
   register: irqbalance_service
   failed_when:
     - irqbalance_service.failed

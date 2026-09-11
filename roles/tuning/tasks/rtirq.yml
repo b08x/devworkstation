@@ -7,7 +7,7 @@
     group: root
     mode: "0644"
   register: rtirq_config
-  when: system_tuning_rtirq_enabled
+  when: tuning_rtirq_enabled
 
 - name: Install rtkit.conf
   ansible.builtin.copy:
@@ -17,7 +17,7 @@
     group: root
     mode: "0644"
   register: rtkit_conf
-  when: system_tuning_rtkit_enabled
+  when: tuning_rtkit_enabled
 
 - name: Install rtkit systemd file
   ansible.builtin.template:
@@ -26,4 +26,4 @@
     mode: "0644"
   register: rtkit_systemd
   notify: Reload systemd
-  when: system_tuning_rtkit_enabled
+  when: tuning_rtkit_enabled

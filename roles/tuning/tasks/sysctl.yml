@@ -5,5 +5,8 @@
     value: "{{ item.value }}"
     state: present
     reload: true
-  loop: "{{ system_tuning_sysctl | dict2items }}"
+  loop: "{{ tuning_sysctl | dict2items }}"
+  # TODO (P1, observability) c08: failed_when:false masks every sysctl failure,
+  # so an unsupported or misspelled key reports green. Scope it to the keys that
+  # are genuinely optional, or drop it.
   failed_when: false

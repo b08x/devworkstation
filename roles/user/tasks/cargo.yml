@@ -10,8 +10,8 @@
   ansible.builtin.command:
     cmd: /tmp/rustup-init.sh -y
   become: false
-  register: base_rustup_output
-  changed_when: "'Rust is installed now' not in base_rustup_output.stdout"
+  register: user_rustup_output
+  changed_when: "'Rust is installed now' not in user_rustup_output.stdout"
   tags: ["rust", "cargo", "base"]
 
 - name: Install cargo packages
@@ -34,4 +34,4 @@
         name: "{{ item }}"
         state: present
         locked: true
-      loop: "{{ base_cargo_packages }}"
+      loop: "{{ user_cargo_packages }}"

@@ -9,7 +9,7 @@
     - name: Check if ranger is installed
       ansible.builtin.command:
         cmd: "command -v ranger"
-      register: base_ranger_check
+      register: user_ranger_check
       changed_when: false
       ignore_errors: true
 
@@ -18,7 +18,7 @@
         name: ranger
         state: present
       become: true
-      when: base_ranger_check.rc != 0
+      when: user_ranger_check.rc != 0
 
   rescue:
     - name: Install Ranger using pipx as user

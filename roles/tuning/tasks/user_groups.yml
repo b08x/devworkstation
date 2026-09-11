@@ -4,5 +4,5 @@
     name: "{{ user.name }}"
     groups: "{{ item }}"
     append: true
-  loop: "{{ system_tuning_groups }}"
+  loop: "{{ tuning_groups }}"
   ignore_errors: "{{ ansible_check_mode }}"
