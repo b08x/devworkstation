@@ -1,22 +1,17 @@
-{# TODO (P1, correctness) c38: this template ignores tuning_cpupower_governor,
-   tuning_cpupower_min_freq and tuning_cpupower_max_freq entirely — the governor
-   is hardcoded below and frequency limits are gated on literal hostnames, so any
-   host not named here gets no limits at all. Drive it from the variables. #}
+{{ ansible_managed | comment }}
 # Define CPUs governor
 # valid governors: ondemand, performance, powersave, conservative, userspace.
-governor='powersave'
+governor='{{ tuning_cpupower_governor }}'
 
 # Limit frequency range
 # Valid suffixes: Hz, kHz (default), MHz, GHz, THz
-{% if ansible_hostname == "soundbot" %}
-min_freq="600MHz"
-max_freq="3800MHz"
+{% if tuning_cpupower_min_freq %}
+min_freq="{{ tuning_cpupower_min_freq }}"
+{% endif %}
+{% if tuning_cpupower_max_freq %}
+max_freq="{{ tuning_cpupower_max_freq }}"
 {% endif %}
 
-{% if ansible_hostname == "ninjabot" %}
-min_freq="1600MHz"
-max_freq="3800MHz"
-{% endif %}
 # Specific frequency to be set.
 # Requires userspace governor to be available.
 # Do not set governor field if you use this one.
