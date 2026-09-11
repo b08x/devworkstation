@@ -6,6 +6,11 @@ tuning_groups:
   - audio
 
 # Sysctl parameters
+
+# Sysctl keys allowed to fail when the host lacks the underlying hardware.
+tuning_sysctl_optional:
+  - dev.hpet.max-user-freq
+
 tuning_sysctl:
   vm.swappiness: 10
   vm.dirty_background_bytes: 100000000
