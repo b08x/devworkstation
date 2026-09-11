@@ -6,7 +6,7 @@
     owner: root
     group: root
     mode: "0644"
-  register: rtirq_config
+  register: tuning_rtirq_config
   when: tuning_rtirq_enabled
 
 - name: Install rtkit.conf
@@ -16,7 +16,7 @@
     owner: root
     group: root
     mode: "0644"
-  register: rtkit_conf
+  register: tuning_rtkit_conf
   when: tuning_rtkit_enabled
 
 - name: Install rtkit systemd file
@@ -24,6 +24,6 @@
     src: usr/lib/systemd/system/rtkit-daemon.service.j2
     dest: /usr/lib/systemd/system/rtkit-daemon.service
     mode: "0644"
-  register: rtkit_systemd
+  register: tuning_rtkit_systemd
   notify: Reload systemd
   when: tuning_rtkit_enabled

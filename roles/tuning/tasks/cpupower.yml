@@ -20,7 +20,7 @@
   ansible.builtin.service:
     name: irqbalance
     enabled: "{{ tuning_irqbalance_enabled }}"
-  register: irqbalance_service
+  register: tuning_irqbalance_service
   failed_when:
-    - irqbalance_service.failed
-    - "'Could not find the requested service' not in (irqbalance_service.msg | default(''))"
+    - tuning_irqbalance_service.failed
+    - "'Could not find the requested service' not in (tuning_irqbalance_service.msg | default(''))"
