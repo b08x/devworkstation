@@ -16,6 +16,10 @@ downloads/
 eggs/
 .eggs/
 lib/
+!roles/tuning/templates/usr/lib/
+!roles/tuning/templates/usr/lib/systemd/
+!roles/tuning/templates/usr/lib/systemd/system/
+!roles/tuning/templates/usr/lib/systemd/system/cpupower.service.j2
 lib64/
 parts/
 sdist/
