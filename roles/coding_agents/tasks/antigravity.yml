@@ -99,10 +99,6 @@
             url: "{{ coding_agents_antigravity_cli_install_url }}"
             dest: /tmp/agy_install.sh
             mode: "0755"
-            # TODO (P2, security) c32: disables TLS verification while fetching
-            # a script that is then executed as root. Remove the override, or
-            # pin and checksum the artifact if the endpoint's cert is broken.
-            validate_certs: false
 
         - name: Install Antigravity CLI
           ansible.builtin.command: bash /tmp/agy_install.sh
