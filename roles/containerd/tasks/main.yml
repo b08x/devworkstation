@@ -21,6 +21,14 @@
         allowerasing: true
 
   rescue:
-    - name: Handle package installation failures
+    # Shape 1 (add context, then re-raise): distrobox is one of the three things
+    # this role installs, so a failure must not report green.
+    - name: Report distrobox installation failure
       ansible.builtin.debug:
-        msg: "Failed to install distrobox. Please check the error message above."
+        msg: >-
+          Failed to install distrobox. On AlmaLinux this package comes from EPEL
+          - check that the base role enabled it.
+
+    - name: Fail the play on distrobox installation failure
+      ansible.builtin.fail:
+        msg: "distrobox installation failed - see the preceding task output."

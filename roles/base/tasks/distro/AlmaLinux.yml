@@ -33,18 +33,17 @@
       tags: ["highavailability", "crb", "rt"]
 
   rescue:
-    - name: Log repository setup failure
+    # Shape 1 (add context, then re-raise): EPEL and CRB carry most of the base
+    # package set, so continuing guarantees a more confusing failure later.
+    - name: Report repository setup failure
       ansible.builtin.debug:
-        msg: >
-          Failed to set up repositories.
-          Error details: {{ ansible_failed_result | default('Unknown error') }}
-          This might be due to network connectivity issues or repository availability.
-      tags: ["repo_setup"]
+        msg: >-
+          Failed to enable EPEL, CRB or the RT/HA repositories.
+          Usually network connectivity or an unavailable mirror.
 
-    - name: Mark repository setup as failed
-      ansible.builtin.set_fact:
-        base_repository_setup_failed: true
-      tags: ["repo_setup"]
+    - name: Fail the play on repository setup failure
+      ansible.builtin.fail:
+        msg: "RHEL-family repository configuration failed - see the preceding task output."
 
 - name: Install RPM Fusion keys and repositories
   tags: ["rpmfusion"]
@@ -77,18 +76,17 @@
       changed_when: "'Nothing to do' not in base_rpmfusion_repos.stdout and 'already installed' not in base_rpmfusion_repos.stdout"
 
   rescue:
-    - name: Log RPM Fusion setup failure
+    # Shape 1 (add context, then re-raise): multimedia entries in base_packages
+    # resolve against RPM Fusion and fail to install without it.
+    - name: Report RPM Fusion setup failure
       ansible.builtin.debug:
-        msg: >
-          Failed to set up RPM Fusion repositories.
-          Error details: {{ ansible_failed_result | default('Unknown error') }}
-          This might be due to network connectivity issues or repository availability.
-      tags: ["rpmfusion_setup"]
+        msg: >-
+          Failed to install the RPM Fusion keys or release packages.
+          Check connectivity and that mirrors.rpmfusion.org is reachable.
 
-    - name: Mark RPM Fusion setup as failed
-      ansible.builtin.set_fact:
-        base_rpmfusion_setup_failed: true
-      tags: ["rpmfusion_setup"]
+    - name: Fail the play on RPM Fusion setup failure
+      ansible.builtin.fail:
+        msg: "RPM Fusion configuration failed - see the preceding task output."
 
 # ----------------------------------------------------------------------------
 # DNF Performance Optimization
@@ -113,18 +111,19 @@
       tags: ["repo_priorities"]
 
   rescue:
-    - name: Log DNF configuration failure
+    # Shape 3 (optional): priorities only decide which repository wins a tie.
+    # DNF still resolves packages without them, so this continues by default;
+    # set base_dnf_priorities_required=true to make it a hard failure.
+    - name: Report DNF priority configuration failure
       ansible.builtin.debug:
-        msg: >
-          Failed to configure DNF settings.
-          Error details: {{ ansible_failed_result | default('Unknown error') }}
-          DNF may still function with default settings.
-      tags: ["dnf_config"]
+        msg: >-
+          WARNING: failed to set DNF repository priorities. DNF still works with
+          its default ordering, but EPEL or RPM Fusion may shadow a base package.
 
-    - name: Mark DNF configuration as failed
-      ansible.builtin.set_fact:
-        base_dnf_config_failed: true
-      tags: ["dnf_config"]
+    - name: Fail the play when DNF priorities are required
+      ansible.builtin.fail:
+        msg: "DNF repository priority configuration failed and base_dnf_priorities_required is true."
+      when: base_dnf_priorities_required | bool
 
 - name: Force refresh DNF metadata cache
   ansible.builtin.command:

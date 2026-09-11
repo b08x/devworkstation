@@ -163,6 +163,21 @@ than any one role — which is why I skip `var-naming[no-role-prefix]` in
 - `libvirt_unix_sock_rw_perms`: Socket permissions (default: `0770`)
 - `libvirt_configure_lvm`: Provision LVM-backed storage (default: `true`)
 
+**Base — rescue strictness**
+
+Three blocks in `base` are best-effort: they warn and continue when they fail,
+because the role still delivers what it promises without them. Set one to `true`
+to turn its failure into a play failure.
+
+- `base_intel_graphics_required`: Intel graphics drivers (default: `false` — the
+  packages only apply to Intel hardware)
+- `base_zoxide_required`: zoxide (default: `false` — a shell convenience)
+- `base_dnf_priorities_required`: DNF repository priorities (default: `false` —
+  DNF still resolves packages with its default ordering)
+
+Every other rescue in the collection either re-raises or performs a real
+fallback. See the rescue convention under [Contributing](#contributing).
+
 **Audio tuning**
 
 - `tuning_sysctl`: Dict of sysctl keys, applied as a loop
@@ -190,9 +205,6 @@ The P0 and P1 defects that used to be listed here are fixed, and no
   options, so role argument validation is decorative. `coding_agents`,
   `containerd` and `libvirt` have no spec at all.
 - Everything under `plugins/` is sample content from the scaffolder.
-- Several blocks in `base` and `desktop` rescue into a `debug` task, which means
-  a failed install still reports green. This is what let the old P0 package bugs
-  go unnoticed for so long; the pattern outlived the bugs themselves.
 
 ## Testing
 
@@ -215,6 +227,24 @@ whichever role opens the port rather than in a central firewall role.
 
 If you're adding a subsystem, give it its own file and a tagged `include_tasks`
 entry in the role's `tasks/main.yml`. Don't inline it.
+
+**Rescue blocks must recover or re-raise, never just log.** A `rescue:` whose
+only action is `debug` converts a failure into a green play, which is how the old
+package defects went unnoticed for so long. Every rescue here carries a comment
+naming which of three shapes it is:
+
+1. **Add context, then re-raise** — a `debug` explaining the likely cause,
+   followed by `ansible.builtin.fail`. This is the default for anything the role
+   promises to deliver.
+2. **Real fallback** — the rescue satisfies the same contract another way, as in
+   `base/tasks/inxi.yml` (dnf → standalone script) and `user/tasks/ranger.yml`
+   (dnf → pipx).
+3. **Documented optional dependency** — the block is genuinely best-effort and
+   the contract holds without it. These must be gated behind a
+   `<role>_<feature>_required` default so an operator can opt into strictness.
+
+Don't reach for a blanket `ignore_errors` instead, and don't `set_fact` a
+`*_failed` flag that nothing reads.
 
 ## License
 

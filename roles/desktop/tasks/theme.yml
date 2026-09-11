@@ -16,9 +16,18 @@
         state: present
         allowerasing: true
   rescue:
-    - name: Handle Fedora theme package failures
+    # Shape 1 (add context, then re-raise): theming is part of what this role
+    # delivers, and swallowing this is what hid the old desktop_packages defects.
+    - name: Report Fedora theme package failure
       ansible.builtin.debug:
-        msg: "Failed to install Yaru theme packages from dnf. Check available repositories."
+        msg: >-
+          Failed to install the Yaru theme packages listed in
+          desktop_packages.theme. Check that those package names exist in the
+          repositories enabled for this Fedora release.
+
+    - name: Fail the play on Fedora theme package failure
+      ansible.builtin.fail:
+        msg: "Yaru theme package installation failed - see the preceding task output."
 
 - name: Build Yaru theme from source (AlmaLinux)
   tags: ["theme", "packages", "build"]
@@ -55,6 +64,15 @@
         creates: /usr/share/themes/Yaru
       changed_when: false
   rescue:
-    - name: Handle AlmaLinux build failures
+    # Shape 1 (add context, then re-raise): same contract as the Fedora branch.
+    # A half-built theme is a failure, not a warning.
+    - name: Report AlmaLinux theme build failure
       ansible.builtin.debug:
-        msg: "Failed to build Yaru theme from source. Check build dependencies and meson/ninja availability."
+        msg: >-
+          Failed to build the Yaru theme from source. Check that meson, ninja and
+          the build dependencies in desktop_packages.theme are installed, and
+          that /tmp/yaru cloned cleanly.
+
+    - name: Fail the play on AlmaLinux theme build failure
+      ansible.builtin.fail:
+        msg: "Yaru theme source build failed - see the preceding task output."

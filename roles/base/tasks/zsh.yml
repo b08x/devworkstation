@@ -60,15 +60,15 @@
         state: absent
 
   rescue:
-    - name: Log zoxide installation failure
+    # Shape 3 (optional): zoxide is a shell convenience, not part of what this
+    # role promises. Set base_zoxide_required=true to make it a hard failure.
+    - name: Report zoxide installation failure
       ansible.builtin.debug:
-        msg: >
-          Failed to install zoxide.
-          Error details: {{ ansible_failed_result | default('Unknown error') }}
-          This might be due to network connectivity issues or GitHub availability.
-      tags: ["zsh", "zoxide_setup"]
+        msg: >-
+          WARNING: failed to install zoxide, usually network connectivity or
+          GitHub availability. The shell is usable without it.
 
-    - name: Mark zoxide installation as failed
-      ansible.builtin.set_fact:
-        base_zoxide_setup_failed: true
-      tags: ["zsh", "zoxide_setup"]
+    - name: Fail the play when zoxide is required
+      ansible.builtin.fail:
+        msg: "zoxide installation failed and base_zoxide_required is true."
+      when: base_zoxide_required | bool

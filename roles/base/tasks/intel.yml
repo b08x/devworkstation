@@ -16,18 +16,19 @@
         - libva-intel-driver
 
   rescue:
-    - name: Log Intel Graphics Drivers setup failure
+    # Shape 3 (optional): this block runs unconditionally but only applies to
+    # Intel graphics hardware. Set base_intel_graphics_required=true on Intel
+    # hosts to turn a failure into a play failure.
+    - name: Report Intel Graphics Drivers failure
       ansible.builtin.debug:
-        msg: >
-          Failed to set up Intel Graphics Drivers.
-          Error details: {{ ansible_failed_result | default('Unknown error') }}
-          This might be due to network connectivity issues or repository availability.
-      tags: ["intel_graphics_setup"]
+        msg: >-
+          WARNING: failed to install the Intel graphics driver packages.
+          Expected on non-Intel hardware; otherwise check repository availability.
 
-    - name: Mark Intel Graphics Drivers setup as failed
-      ansible.builtin.set_fact:
-        base_intel_graphics_setup_failed: true
-      tags: ["intel_graphics_setup"]
+    - name: Fail the play when Intel Graphics Drivers are required
+      ansible.builtin.fail:
+        msg: "Intel graphics driver installation failed and base_intel_graphics_required is true."
+      when: base_intel_graphics_required | bool
 
 - name: Install Intel oneAPI Toolkit
   when: intel_oneapi_install | default(false) | bool
@@ -130,15 +131,16 @@
         backup: true
 
   rescue:
-    - name: Log Intel oneAPI setup failure
+    # Shape 1 (add context, then re-raise): this block only runs when the
+    # operator sets intel_oneapi_install, so exiting green contradicts an
+    # explicit request.
+    - name: Report Intel oneAPI setup failure
       ansible.builtin.debug:
-        msg: >
-          Failed to set up Intel oneAPI Toolkit.
-          Error details: {{ ansible_failed_result | default('Unknown error') }}
-          This might be due to network connectivity issues or repository availability.
-      tags: ["intel_oneapi_setup"]
+        msg: >-
+          Failed to set up the Intel oneAPI toolkit. The pinned package versions
+          in this task are the usual cause - check that yum.repos.intel.com still
+          carries them.
 
-    - name: Mark Intel oneAPI setup as failed
-      ansible.builtin.set_fact:
-        base_intel_oneapi_setup_failed: true
-      tags: ["intel_oneapi_setup"]
+    - name: Fail the play on Intel oneAPI setup failure
+      ansible.builtin.fail:
+        msg: "Intel oneAPI installation failed - see the preceding task output."

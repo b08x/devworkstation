@@ -77,7 +77,17 @@
       changed_when: true
 
   rescue:
-    - name: Handle installation failure
+    # Shape 1 (add context, then re-raise). The previous rescue looped over
+    # ansible_failed_result.results, which only exists when the failing task was
+    # itself looped - when the set_fact above failed instead, the rescue raised
+    # an undefined-attribute error and buried the real one.
+    - name: Report VS Code extension installation failure
       ansible.builtin.debug:
-        msg: "Failed to install VSCode extension: {{ item }}"
-      loop: "{{ ansible_failed_result.results | map(attribute='item') | list }}"
+        msg: >-
+          Failed while installing VS Code extensions. If 'code' is not on PATH
+          the preceding list-extensions task returns nothing and every extension
+          is attempted; otherwise check the id of the extension that failed.
+
+    - name: Fail the play on VS Code extension installation failure
+      ansible.builtin.fail:
+        msg: "VS Code extension installation failed - see the preceding task output."

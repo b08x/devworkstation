@@ -18,6 +18,8 @@
       when: base_inxi_check.rc != 0
 
   rescue:
+    # Shape 2 (real fallback): inxi is absent from some repository sets, so
+    # the rescue satisfies the same contract by fetching the standalone script.
     - name: Download inxi standalone script from smxi.org
       ansible.builtin.get_url:
         url: https://codeberg.org/smxi/inxi/raw/branch/master/inxi

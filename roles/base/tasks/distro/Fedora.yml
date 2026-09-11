@@ -53,18 +53,19 @@
       tags: ["dnf_priorities"]
 
   rescue:
-    - name: Log repository setup failure
+    # Shape 1 (add context, then re-raise): every later package task resolves
+    # against these repositories, so continuing here only relocates the failure
+    # somewhere less obvious.
+    - name: Report repository setup failure
       ansible.builtin.debug:
-        msg: >
-          Failed to set up repositories.
-          Error details: {{ ansible_failed_result | default('Unknown error') }}
-          This might be due to network connectivity issues or repository availability.
-      tags: ["repo_setup"]
+        msg: >-
+          Failed to configure third-party repositories.
+          Usually network connectivity or an unavailable RPM Fusion mirror.
+          Set base_enable_rpmfusion=false to skip RPM Fusion entirely.
 
-    - name: Mark repository setup as failed
-      ansible.builtin.set_fact:
-        base_repository_setup_failed: true
-      tags: ["repo_setup"]
+    - name: Fail the play on repository setup failure
+      ansible.builtin.fail:
+        msg: "Third-party repository configuration failed - see the preceding task output."
 
 - name: Force refresh DNF metadata cache
   ansible.builtin.command:
