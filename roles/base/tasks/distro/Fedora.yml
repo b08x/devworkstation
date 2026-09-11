@@ -1,5 +1,77 @@
 ---
-# TODO (P1, correctness) c04: this file is empty, so the third-party repo
-# configuration included by tasks/main.yml is a silent no-op on Fedora.
-# Populate it with the RPMFusion/COPR setup, or drop the include and document
-# that Fedora needs none.
+# ============================================================================
+# Fedora Repository Configuration
+# Sets up RPM Fusion and any COPR repositories, then fixes repo priorities.
+# Adapted from ansible-collection-rhel-workstation-builder roles/base.
+# ============================================================================
+
+- name: Install repository management prerequisites
+  ansible.builtin.dnf:
+    name:
+      - python3-libdnf5
+      - fedora-workstation-repositories
+      - dnf-plugins-core
+    state: present
+  tags: ["packages", "packages__repos"]
+
+- name: Configure third-party repositories
+  tags: ["repositories"]
+  block:
+    - name: Install RPM Fusion Free repository
+      ansible.builtin.dnf:
+        name: "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_distribution_major_version }}.noarch.rpm"
+        state: present
+        disable_gpg_check: true
+      register: base_rpmfusion_free
+      when: base_enable_rpmfusion | bool
+      tags: ["rpmfusion"]
+
+    - name: Install RPM Fusion Non-Free repository
+      ansible.builtin.dnf:
+        name: "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_distribution_major_version }}.noarch.rpm"
+        state: present
+        disable_gpg_check: true
+      register: base_rpmfusion_nonfree
+      when: base_enable_rpmfusion | bool
+      tags: ["rpmfusion"]
+
+    - name: Enable COPR repositories
+      community.general.copr:
+        name: "{{ item }}"
+        state: enabled
+      loop: "{{ base_copr_repos }}"
+      register: base_copr_enabled
+      when: base_copr_repos | length > 0
+      tags: ["copr"]
+
+    - name: Set repository priorities
+      ansible.builtin.command:
+        cmd: >-
+          dnf config-manager setopt
+          fedora.priority=0 updates.priority=0 rpmfusion-*.priority=90
+      changed_when: false
+      tags: ["dnf_priorities"]
+
+  rescue:
+    - name: Log repository setup failure
+      ansible.builtin.debug:
+        msg: >
+          Failed to set up repositories.
+          Error details: {{ ansible_failed_result | default('Unknown error') }}
+          This might be due to network connectivity issues or repository availability.
+      tags: ["repo_setup"]
+
+    - name: Mark repository setup as failed
+      ansible.builtin.set_fact:
+        base_repository_setup_failed: true
+      tags: ["repo_setup"]
+
+- name: Force refresh DNF metadata cache
+  ansible.builtin.command:
+    cmd: dnf makecache
+  changed_when: true
+  when: >
+    (base_rpmfusion_free is changed) or
+    (base_rpmfusion_nonfree is changed) or
+    (base_copr_enabled is changed)
+  tags: ["repositories"]
