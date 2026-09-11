@@ -10,19 +10,20 @@
   ansible.builtin.include_vars: "{{ ansible_distribution }}.yml"
   tags: ["desktop", "distro"]
 
+- name: Report qt/gtk package keys missing for this distribution
+  ansible.builtin.debug:
+    msg: >-
+      desktop_packages has no {{ item }} key for {{ ansible_distribution }};
+      skipping those packages.
+  loop: "{{ ['qt', 'gtk'] | reject('in', desktop_packages | default({})) | list }}"
+  tags: ["packages", "desktop"]
+
 - name: Install qt and gtk packages
-  block:
-    - name: Install qt and gtk packages
-      ansible.builtin.dnf:
-        name: "{{ item }}"
-        state: present
-      loop:
-        - "{{ desktop_packages.qt }}"
-        - "{{ desktop_packages.gtk }}"
-  rescue:
-    - name: Handle package installation failures
-      ansible.builtin.debug:
-        msg: "Failed to install some packages. Please check the error message above."
+  ansible.builtin.dnf:
+    name: "{{ (desktop_packages.qt | default([])) + (desktop_packages.gtk | default([])) }}"
+    state: present
+  when: (desktop_packages.qt | default([])) or (desktop_packages.gtk | default([]))
+  tags: ["packages", "desktop"]
 
 - name: Include GNOME desktop installation tasks
   ansible.builtin.include_tasks: gnome.yml
