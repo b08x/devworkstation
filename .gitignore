@@ -165,3 +165,7 @@ cython_debug/
 
 # Ansible
 .ansible/
+
+.crush/
+
+graphify-out/
