@@ -22,11 +22,18 @@
         update: true
         version: main
 
-    # Upstream installs via setup.py: it lays down the systemd unit, the D-Bus
-    # policy and the udev rules as data_files, which a wheel install does not.
+    # pip, in many cases, fails to install data files, which need to go into system paths,
+    # and instead puts them (despite them being absolute paths) into
+    # /usr/lib/python3/inputremapper/usr/share/...
+    # python3 setup.py install is deprecated
+    # meson fails to install the module into a path that can actually be imported, and
+    # its python features require one to specify each individual file of the module.
+    # So instead, input-remapper uses a custom python solution. Hopefulls this works well
+    # enough to prevent all ModuleNotFoundErrors in the future.
+    # https://raw.githubusercontent.com/sezanzeb/input-remapper/refs/heads/main/install/__main__.py
     - name: Install input-remapper service
       ansible.builtin.command:
-        cmd: python3 setup.py install --root /
+        cmd: python3 -m install --root /
         chdir: /tmp/input-remapper
         creates: /etc/systemd/system/input-remapper.service
       notify: Daemon reload
