@@ -1,13 +1,2 @@
 ---
 # vars file for b08x.devworkstation.base
-
-base_cargo_packages:
-  - bottom
-  - choose
-  - exa
-  - git-cliff
-  - gping
-  - ripgrep_all
-  - sd
-  - gitui
-  - eza

@@ -70,23 +70,18 @@
 - name: Flush handlers meow
   ansible.builtin.meta: flush_handlers
 
+- name: Include Intel installation tasks
+  ansible.builtin.include_tasks: intel.yml
+  tags: ["intel", "base"]
+
 - name: Include gitflow installation tasks
   ansible.builtin.include_tasks: gitflow.yml
   tags: ["gitflow", "base"]
-
-- name: Include cargo installation tasks
-  ansible.builtin.include_tasks: cargo.yml
-  when: base_install_cargo | default(false) | bool
-  tags: ["cargo", "base"]
 
 - name: Include Go installation tasks
   ansible.builtin.include_tasks: go.yml
   when: base_install_go | default(true) | bool
   tags: ["go", "base"]
-
-- name: Include Intel installation tasks
-  ansible.builtin.include_tasks: intel.yml
-  tags: ["intel", "base"]
 
 - name: Include fzf installation tasks
   ansible.builtin.include_tasks: fzf.yml
@@ -96,31 +91,14 @@
   ansible.builtin.include_tasks: inxi.yml
   tags: ["inxi", "base"]
 
-- name: Include rbenv configuration tasks
-  ansible.builtin.include_tasks: rbenv.yml
-  when: base_install_rbenv | default(true) | bool
-  tags: ["rbenv", "ruby", "base"]
-
-- name: Include Ranger installation tasks
-  ansible.builtin.include_tasks: ranger.yml
-  tags: ["ranger", "base"]
-
-- name: Include Zsh installation tasks
-  ansible.builtin.include_tasks: zsh.yml
-  tags: ["zsh", "base"]
-
-- name: Include pip configuration tasks
-  ansible.builtin.include_tasks: pip.yml
-  tags: ["pip", "base"]
-
-- name: Include uv configuration tasks
-  ansible.builtin.include_tasks: uv.yml
-  tags: ["uv", "base"]
-
 - name: Include Homebrew configuration tasks
   ansible.builtin.include_tasks: homebrew.yml
   when: ansible_distribution == 'Fedora'
   tags: ["homebrew", "base"]
+
+- name: Include Zsh installation tasks
+  ansible.builtin.include_tasks: zsh.yml
+  tags: ["zsh", "base"]
 
 - name: Include yadm installation tasks
   ansible.builtin.include_tasks: yadm.yml

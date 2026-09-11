@@ -2,6 +2,9 @@
 # rbenv: install Ruby versions, set global, update rubygems, install gems
 # Runs as the target user since rbenv is a per-user tool
 
+# TODO: ~/.gemrc
+# gem: --no-document
+
 - name: Check if rbenv is available
   ansible.builtin.command: rbenv --version
   register: base_rbenv_version_check

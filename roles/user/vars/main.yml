@@ -1,0 +1,12 @@
+---
+# vars file for b08x.devworkstation.user
+user_cargo_packages:
+  - bottom
+  - choose
+  - exa
+  - git-cliff
+  - gping
+  - ripgrep_all
+  - sd
+  - gitui
+  - eza
