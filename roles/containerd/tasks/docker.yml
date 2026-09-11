@@ -52,7 +52,7 @@
 
 - name: Configure the Docker daemon (/etc/docker/daemon.json)
   ansible.builtin.template:
-    src: daemon.json.j2
+    src: etc/docker/daemon.json.j2
     dest: /etc/docker/daemon.json
     owner: root
     group: root
