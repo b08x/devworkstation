@@ -46,6 +46,10 @@
   ansible.builtin.include_tasks: vscode.yml
   tags: ["vscode", "desktop"]
 
+- name: Include Antigravity Hub and IDE installation tasks
+  ansible.builtin.include_tasks: antigravity.yml
+  tags: ["antigravity", "desktop"]
+
 - name: Include input-remapper tasks
   ansible.builtin.include_tasks: input-remapper.yml
   tags: ["input-remapper"]

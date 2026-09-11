@@ -22,11 +22,11 @@ Nine roles, seven of which do real work:
 | :--- | :--- |
 | `base` | Packages, repos, zsh, Go, fzf, yadm, Homebrew, gitflow, Intel oneAPI |
 | `user` | My per-user toolchains — cargo, pip, rbenv, uv, ranger |
-| `desktop` | Desktop environment, GNOME, Qt/GTK theming, Flatpaks, input-remapper |
+| `desktop` | Desktop environment, GNOME, Qt/GTK theming, Flatpaks, VS Code, Antigravity Hub/IDE, input-remapper |
 | `tuning` | Realtime audio — sysctl, limits, udev timers, rtirq, rtkit, cpupower |
 | `libvirt` | libvirt, KVM, virtual networking, LVM storage |
 | `containerd` | Podman, Docker, distrobox |
-| `coding_agents` | Antigravity, Claude, Crush, OpenCode, Vibe |
+| `coding_agents` | Antigravity CLI, Claude, Crush, OpenCode, Vibe |
 | `networking` | Nothing yet — scaffold stub |
 | `run` | Nothing yet — scaffold stub |
 
@@ -135,11 +135,11 @@ The subsystem tags available to you:
 
 - **base** — `dnf`, `repos`, `packages`, `zsh`, `go`, `fzf`, `yadm`, `gitflow`, `homebrew`, `intel`, `inxi`
 - **user** — `cargo`, `pip`, `rbenv`, `ranger`, `uv`
-- **desktop** — `gnome`, `flatpaks`, `flathub`, `input-remapper`, `vscode`
+- **desktop** — `gnome`, `flatpaks`, `flathub`, `input-remapper`, `vscode`, `antigravity`
 - **tuning** — `sysctl`, `limits`, `udev`, `rtirq`, `tuned`, `cpupower`, `groups`
 - **libvirt** — `install`, `config`, `service`, `users`, `lvm`, `network`
 - **containerd** — `podman`, `docker`, `distrobox`
-- **coding_agents** — `antigravity`, `claude`, `crush`, `opencode`, `vibe`, each pairing with `install`, `config` or `uninstall`
+- **coding_agents** — `antigravity` (CLI only; the Hub and IDE are tagged `antigravity` under **desktop**), `claude`, `crush`, `opencode`, `vibe`, each pairing with `install`, `config` or `uninstall`
 
 ## Configuring it
 
@@ -196,7 +196,6 @@ grep -rn "TODO (P" roles/
 | P1 | `tuning/templates/etc/default/cpupower.j2` | Ignores `tuning_cpupower_governor` and the min/max frequency variables entirely — I hardcoded the governor and gated the frequency limits on literal hostnames. |
 | P1 | `base/tasks/distro/Fedora.yml` | Empty file, so third-party repo setup is a silent no-op on Fedora. |
 | P1 | `tuning/tasks/sysctl.yml` | `failed_when: false` masks every sysctl failure, so a misspelled key reports success. |
-| P2 | `coding_agents/tasks/antigravity.yml` | Fetches an install script with `validate_certs: false`, then runs it as root. |
 
 The cpupower one is worth spelling out, because it's the kind of bug that hides
 in plain sight. My `host_vars/gir.yml` asks for `tuning_cpupower_max_freq:

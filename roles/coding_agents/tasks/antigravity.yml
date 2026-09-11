@@ -1,88 +1,28 @@
 ---
-# Antigravity — binary install + config deployment
-# Antigravity needs become: true for /opt and desktop files
+# Antigravity CLI (agy) — binary install + config deployment
+# The Antigravity Hub and IDE, and their desktop entries, live in the desktop role.
 
 # -- Uninstall --
-- name: Uninstall Antigravity
+- name: Uninstall Antigravity CLI
   when: coding_agents_uninstall | default(false) | bool
   tags: ["antigravity", "uninstall"]
   block:
-    - name: Remove Antigravity directories
+    - name: Remove Antigravity CLI directory
       ansible.builtin.file:
-        path: "{{ item }}"
+        path: "{{ ansible_user_dir }}/.gemini/antigravity-cli"
         state: absent
-      become: true
-      loop:
-        - /opt/antigravity
-        - /opt/antigravity-ide
-        - "{{ ansible_user_dir }}/.gemini/antigravity-cli"
 
     - name: Remove Antigravity CLI binary
       ansible.builtin.file:
         path: "{{ ansible_user_dir }}/.local/bin/agy"
         state: absent
-
-    - name: Remove Antigravity desktop files
-      ansible.builtin.file:
-        path: "{{ item }}"
-        state: absent
-      become: true
-      loop:
-        - /usr/share/applications/antigravity.desktop
-        - /usr/share/applications/antigravity-ide.desktop
 # -- Install --
-- name: Install Antigravity
+- name: Install Antigravity CLI
   when:
     - coding_agents_antigravity_state == 'present'
     - not (coding_agents_uninstall | default(false) | bool)
   tags: ["antigravity", "install"]
   block:
-    - name: Ensure Antigravity destination directories exist
-      ansible.builtin.file:
-        path: "{{ item }}"
-        state: directory
-        owner: "{{ ansible_user_id }}"
-        group: "{{ ansible_user_id }}"
-        mode: "0755"
-      become: true
-      loop:
-        - /opt/antigravity
-        - /opt/antigravity-ide
-
-    - name: Check installed Antigravity Hub version
-      ansible.builtin.slurp:
-        src: /opt/antigravity/.installed_url
-      register: coding_agents_agy_hub_installed
-      failed_when: false
-      become: true
-
-    - name: Update Antigravity Hub
-      when: >
-        coding_agents_agy_hub_installed.content is not defined or
-        (coding_agents_agy_hub_installed.content | b64decode | trim != coding_agents_antigravity_hub_url)
-      block:
-        - name: Download Antigravity Hub package
-          ansible.builtin.get_url:
-            url: "{{ coding_agents_antigravity_hub_url }}"
-            dest: /tmp/Antigravity.tar.gz
-            mode: "0644"
-
-        - name: Extract Antigravity Hub package
-          ansible.builtin.unarchive:
-            src: /tmp/Antigravity.tar.gz
-            dest: /opt/antigravity
-            remote_src: true
-            owner: "{{ ansible_user_id }}"
-            group: "{{ ansible_user_id }}"
-          become: true
-
-        - name: Record installed Antigravity Hub version
-          ansible.builtin.copy:
-            content: "{{ coding_agents_antigravity_hub_url }}"
-            dest: /opt/antigravity/.installed_url
-            mode: "0644"
-          become: true
-
     - name: Check if Antigravity CLI exists
       ansible.builtin.stat:
         path: "{{ ansible_user_dir }}/.local/bin/agy"
@@ -91,8 +31,7 @@
     - name: Update Antigravity CLI
       when: >
         not coding_agents_agy_cli_stat.stat.exists or
-        coding_agents_agy_hub_installed.content is not defined or
-        (coding_agents_agy_hub_installed.content | b64decode | trim != coding_agents_antigravity_hub_url)
+        (coding_agents_antigravity_cli_force_update | default(false) | bool)
       block:
         - name: Download Antigravity CLI install script
           ansible.builtin.get_url:
@@ -105,68 +44,6 @@
           become: true
           become_user: "{{ ansible_user_id }}"
           changed_when: true
-
-    - name: Check installed Antigravity IDE version
-      ansible.builtin.slurp:
-        src: /opt/antigravity-ide/.installed_url
-      register: coding_agents_agy_ide_installed
-      failed_when: false
-      become: true
-
-    - name: Update Antigravity IDE
-      when: >
-        coding_agents_agy_ide_installed.content is not defined or
-        (coding_agents_agy_ide_installed.content | b64decode | trim != coding_agents_antigravity_ide_url)
-      block:
-        - name: Download Antigravity IDE package
-          ansible.builtin.get_url:
-            url: "{{ coding_agents_antigravity_ide_url }}"
-            dest: "/tmp/Antigravity_IDE.tar.gz"
-            mode: "0644"
-
-        - name: Extract Antigravity IDE package
-          ansible.builtin.unarchive:
-            src: "/tmp/Antigravity_IDE.tar.gz"
-            dest: /opt/antigravity-ide
-            remote_src: true
-            owner: "{{ ansible_user_id }}"
-            group: "{{ ansible_user_id }}"
-            extra_opts:
-              - --strip-components=1
-          become: true
-
-        - name: Record installed Antigravity IDE version
-          ansible.builtin.copy:
-            content: "{{ coding_agents_antigravity_ide_url }}"
-            dest: /opt/antigravity-ide/.installed_url
-            mode: "0644"
-          become: true
-
-    - name: Create desktop file for Antigravity IDE
-      ansible.builtin.copy:
-        dest: /usr/share/applications/antigravity-ide.desktop
-        content: |
-          [Desktop Entry]
-          Name=Antigravity IDE
-          Exec=/opt/antigravity-ide/antigravity-ide %F
-          Icon=/opt/antigravity-ide/resources/app/resources/linux/code.png
-          Type=Application
-          Categories=Development;IDE;
-        mode: "0644"
-      become: true
-
-    - name: Create desktop file for Antigravity Hub
-      ansible.builtin.copy:
-        dest: /usr/share/applications/antigravity.desktop
-        content: |
-          [Desktop Entry]
-          Name=Antigravity
-          Exec=/opt/antigravity/Antigravity-x64/antigravity
-          Icon=/opt/antigravity-ide/resources/app/resources/linux/code.png
-          Type=Application
-          Categories=Development;IDE;
-        mode: "0644"
-      become: true
 # -- Config --
 - name: Configure Antigravity
   when:

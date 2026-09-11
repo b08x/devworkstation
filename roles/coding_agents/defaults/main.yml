@@ -10,12 +10,10 @@ coding_agents_crush_state: present
 coding_agents_opencode_state: present
 coding_agents_vibe_state: present
 
-# Antigravity download URLs
-coding_agents_antigravity_hub_url: "https://storage.googleapis.com/antigravity-public/antigravity-hub/2.11.0-6376446768316416/linux-x64/Antigravity.tar.gz"
-coding_agents_antigravity_ide_url: >-
-  {{ 'https://edgedl.me.gvt1.com/edgedl/release2/j0qc3/antigravity/stable/' ~
-     '2.5.5-4923483625488384/linux-x64/Antigravity%20IDE.tar.gz' }}
+# Antigravity CLI (the Hub and IDE are installed by the desktop role)
 coding_agents_antigravity_cli_install_url: "https://antigravity.google/cli/install.sh"
+# Reinstall the CLI even when the agy binary is already present
+coding_agents_antigravity_cli_force_update: false
 
 # Antigravity config directories
 coding_agents_antigravity_config_dir: "{{ ansible_user_dir }}/.gemini/config"
