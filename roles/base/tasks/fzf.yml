@@ -1,4 +1,19 @@
 ---
+- name: Check whether fzf is available in dnf
+  ansible.builtin.command:
+    cmd: dnf --quiet list --available fzf
+  register: fzf_dnf_check
+  changed_when: false
+  failed_when: false
+  tags: ["fzf", "base"]
+
+- name: Install fzf from dnf
+  ansible.builtin.dnf:
+    name: fzf
+    state: present
+  when: fzf_dnf_check.rc == 0
+  tags: ["fzf", "base"]
+
 - name: Clone fzf repository
   ansible.builtin.git:
     repo: "https://github.com/junegunn/fzf.git"
@@ -6,10 +21,12 @@
     clone: true
     update: true
     version: master
+  when: fzf_dnf_check.rc != 0
   tags: ["fzf", "base"]
 
 - name: Install fzf
   tags: ["fzf", "base"]
+  when: fzf_dnf_check.rc != 0
   vars:
     path:
       - "{{ ansible_user_dir }}/.local/bin"

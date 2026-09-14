@@ -22,6 +22,16 @@
       register: base_epel_install
       tags: ["epel"]
 
+    - name: Replace stock EPEL repo with managed repo configuration
+      ansible.builtin.copy:
+        src: etc/yum.repos.d/epel.repo
+        dest: /etc/yum.repos.d/epel.repo
+        owner: root
+        group: root
+        mode: "0644"
+        backup: true
+      tags: ["epel", "repositories"]
+
     - name: Enable PowerTools/CRB and additional repositories
       ansible.builtin.shell: |
         dnf config-manager --set-enabled crb
@@ -92,38 +102,38 @@
 # DNF Performance Optimization
 # ----------------------------------------------------------------------------
 
-- name: Set DNF Repository Priorities
-  tags: ["dnf_configuration"]
-  block:
-    - name: Configure repository priorities
-      ansible.builtin.shell: |
-        # Base system and official extension repositories (highest priority)
-        dnf config-manager --save --setopt="baseos.priority=1"
-        dnf config-manager --save --setopt="appstream.priority=1"
-        dnf config-manager --save --setopt="crb.priority=1"
-        dnf config-manager --save --setopt="rt.priority=1"
-        dnf config-manager --save --setopt="highavailability.priority=1"
+# - name: Set DNF Repository Priorities
+#   tags: ["dnf_configuration"]
+#   block:
+#     - name: Configure repository priorities
+#       ansible.builtin.shell: |
+#         # Base system and official extension repositories (highest priority)
+#         dnf config-manager --save --setopt="baseos.priority=1"
+#         dnf config-manager --save --setopt="appstream.priority=1"
+#         dnf config-manager --save --setopt="crb.priority=1"
+#         dnf config-manager --save --setopt="rt.priority=1"
+#         dnf config-manager --save --setopt="highavailability.priority=1"
 
-        # EPEL and RPM Fusion repositories (must be at the same priority tier)
-        dnf config-manager --save --setopt="epel.priority=20"
-        dnf config-manager --save --setopt="rpmfusion-*.priority=20"
-      changed_when: false
-      tags: ["repo_priorities"]
+#         # EPEL and RPM Fusion repositories (must be at the same priority tier)
+#         dnf config-manager --save --setopt="epel.priority=20"
+#         dnf config-manager --save --setopt="rpmfusion-*.priority=20"
+#       changed_when: false
+#       tags: ["repo_priorities"]
 
-  rescue:
-    # Shape 3 (optional): priorities only decide which repository wins a tie.
-    # DNF still resolves packages without them, so this continues by default;
-    # set base_dnf_priorities_required=true to make it a hard failure.
-    - name: Report DNF priority configuration failure
-      ansible.builtin.debug:
-        msg: >-
-          WARNING: failed to set DNF repository priorities. DNF still works with
-          its default ordering, but EPEL or RPM Fusion may shadow a base package.
+#   rescue:
+#     # Shape 3 (optional): priorities only decide which repository wins a tie.
+#     # DNF still resolves packages without them, so this continues by default;
+#     # set base_dnf_priorities_required=true to make it a hard failure.
+#     - name: Report DNF priority configuration failure
+#       ansible.builtin.debug:
+#         msg: >-
+#           WARNING: failed to set DNF repository priorities. DNF still works with
+#           its default ordering, but EPEL or RPM Fusion may shadow a base package.
 
-    - name: Fail the play when DNF priorities are required
-      ansible.builtin.fail:
-        msg: "DNF repository priority configuration failed and base_dnf_priorities_required is true."
-      when: base_dnf_priorities_required | bool
+#     - name: Fail the play when DNF priorities are required
+#       ansible.builtin.fail:
+#         msg: "DNF repository priority configuration failed and base_dnf_priorities_required is true."
+#       when: base_dnf_priorities_required | bool
 
 - name: Force refresh DNF metadata cache
   ansible.builtin.command:
