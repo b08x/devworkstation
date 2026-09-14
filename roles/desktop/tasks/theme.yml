@@ -39,30 +39,46 @@
         state: present
         allowerasing: true
 
-    - name: Clone Yaru repository
-      ansible.builtin.git:
-        repo: https://github.com/ubuntu/yaru.git
-        dest: /tmp/yaru
-        clone: true
-        update: false
-        recursive: true
-        version: "master"
-      become: false
+    - name: Check if Yaru theme is installed
+      ansible.builtin.stat:
+        path: /usr/share/themes/Yaru
+      register: desktop_theme_yaru
 
-    - name: Run meson build
-      ansible.builtin.command:
-        cmd: meson setup build
-        chdir: /tmp/yaru
-        creates: /tmp/yaru/build/build.ninja
-      changed_when: false
-      become: false
+    - name: Build and install Yaru theme
+      when: not desktop_theme_yaru.stat.exists | default(false)
+      block:
+        - name: Ensure clean state for Yaru clone
+          ansible.builtin.file:
+            path: /tmp/yaru
+            state: absent
 
-    - name: Install Yaru theme (ninja install)
-      ansible.builtin.command:
-        cmd: ninja -C build install
-        chdir: /tmp/yaru
-        creates: /usr/share/themes/Yaru
-      changed_when: false
+        - name: Clone Yaru repository
+          ansible.builtin.git:
+            repo: https://github.com/ubuntu/yaru.git
+            dest: /tmp/yaru
+            clone: true
+            update: false
+            recursive: true
+            version: "master"
+          become: false
+
+        - name: Run meson build
+          ansible.builtin.command:
+            cmd: meson setup build
+            chdir: /tmp/yaru
+          changed_when: false
+          become: false
+
+        - name: Install Yaru theme (ninja install)
+          ansible.builtin.command:
+            cmd: ninja -C build install
+            chdir: /tmp/yaru
+          changed_when: false
+
+        - name: Clean up Yaru clone
+          ansible.builtin.file:
+            path: /tmp/yaru
+            state: absent
   rescue:
     # Shape 1 (add context, then re-raise): same contract as the Fedora branch.
     # A half-built theme is a failure, not a warning.

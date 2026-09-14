@@ -2,7 +2,7 @@
 - name: Check whether fzf is available in dnf
   ansible.builtin.command:
     cmd: dnf --quiet list --available fzf
-  register: fzf_dnf_check
+  register: base_fzf_dnf_check
   changed_when: false
   failed_when: false
   tags: ["fzf", "base"]
@@ -11,22 +11,21 @@
   ansible.builtin.dnf:
     name: fzf
     state: present
-  when: fzf_dnf_check.rc == 0
+  when: base_fzf_dnf_check.rc == 0
   tags: ["fzf", "base"]
 
-- name: Clone fzf repository
-  ansible.builtin.git:
-    repo: "https://github.com/junegunn/fzf.git"
-    dest: /tmp/fzf
-    clone: true
-    update: true
-    version: master
-  when: fzf_dnf_check.rc != 0
+- name: Check if fzf is installed from source
+  ansible.builtin.stat:
+    path: /usr/local/bin/fzf
+  register: base_fzf_bin
+  when: base_fzf_dnf_check.rc != 0
   tags: ["fzf", "base"]
 
-- name: Install fzf
+- name: Build and install fzf from source
   tags: ["fzf", "base"]
-  when: fzf_dnf_check.rc != 0
+  when:
+    - base_fzf_dnf_check.rc != 0
+    - not base_fzf_bin.stat.exists | default(false)
   vars:
     path:
       - "{{ ansible_user_dir }}/.local/bin"
@@ -36,12 +35,23 @@
   environment:
     PATH: "{{ path | join(':') }}:{{ ansible_env.PATH }}:/sbin:/bin"
   block:
-    - name: Install fzf
+    - name: Ensure clean state for fzf clone
+      ansible.builtin.file:
+        path: /tmp/fzf
+        state: absent
+
+    - name: Clone fzf repository
+      ansible.builtin.git:
+        repo: "https://github.com/junegunn/fzf.git"
+        dest: /tmp/fzf
+        clone: true
+        update: true
+        version: master
+
+    - name: Install fzf via make
       ansible.builtin.command:
         cmd: make install
         chdir: /tmp/fzf
-        creates: /usr/local/bin/fzf
-      tags: ["fzf", "base"]
 
     - name: Copy fzf binaries to /usr/local/bin
       ansible.builtin.copy:
@@ -50,4 +60,8 @@
         remote_src: true
         mode: "0755"
         backup: true
-      tags: ["fzf", "base"]
+
+    - name: Clean up fzf clone
+      ansible.builtin.file:
+        path: /tmp/fzf
+        state: absent
